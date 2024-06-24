@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.dot-grid {
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+}
+
+.dot-grid svg {
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
+}
+
+.dot-grid circle {
+  transition: fill 0.2s;
+}
+
+.dot-grid circle:hover {
+  /* fill: red; */
+}
