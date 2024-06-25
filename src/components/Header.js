@@ -12,8 +12,14 @@ export default function Header() {
             <Navbar.Brand>Connect Dots</Navbar.Brand>
             <div className="d-flex align-items-center gap-2">
                 <span>Welcome</span>
-                <FormControl type="text" value={username} onChange={handleChange} />
-                <Button variant="success" onClick={randomizeUsername}>
+                <FormControl
+                    type="text"
+                    value={username}
+                    onChange={handleChange}
+                />
+                <Button
+                    variant="success"
+                    onClick={randomizeUsername}>
                     Random
                 </Button>
             </div>

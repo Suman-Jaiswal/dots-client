@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import useSocket from '../hooks/useSocket';
+import useUser from '../hooks/useUser';
 
 const RoomContext = createContext();
 
@@ -8,8 +9,11 @@ const RoomProvider = ({ children }) => {
     const [roomJoined, setRoomJoined] = useState(false);
     const [roomCreated, setRoomCreated] = useState(false);
     const [roomError, setRoomError] = useState(null);
+    const [player1, setPlayer1] = useState(null);
+    const [player2, setPlayer2] = useState(null);
 
     const { on, off, emit, socket } = useSocket();
+    const { user } = useUser();
 
     useEffect(() => {
         console.log('RoomProvider mounted');
@@ -54,6 +58,12 @@ const RoomProvider = ({ children }) => {
             localStorage.removeItem('roomId');
         });
 
+        on('playerList', (players) => {
+            console.log('Player list:', players);
+            setPlayer1(players.filter((player) => player === user?.username)[0]);
+            setPlayer2(players.filter((player) => player !== user?.username)[0]);
+        });
+
         on('roomError', (message) => {
             console.error(message);
             setRoomError(message);
@@ -67,8 +77,9 @@ const RoomProvider = ({ children }) => {
             off('roomCreated');
             off('roomLeft');
             off('roomError');
+            off('playerList');
         };
-    }, [off, on, setRoomCreated, setRoomError, setRoomId, setRoomJoined, socket]);
+    }, [off, on, setRoomCreated, setRoomError, setRoomId, setRoomJoined, socket, user?.username]);
 
     return (
         <RoomContext.Provider
@@ -77,6 +88,8 @@ const RoomProvider = ({ children }) => {
                 roomJoined,
                 roomCreated,
                 roomError,
+                player1,
+                player2,
             }}>
             {children}
         </RoomContext.Provider>

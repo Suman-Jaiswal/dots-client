@@ -9,19 +9,13 @@ const GameProvider = ({ children }) => {
     const { on, off, emit } = useSocket();
     const { user } = useUser();
     const { roomId } = useRoom();
-
-    const [turn, setTurn] = useState(false);
-    const [copied, setCopied] = useState(false);
-    const [started, setStarted] = useState(false);
     const logRef = useRef(null);
 
-    const [player1] = useState({
-        name: user?.username,
-        points: 0,
-        turn: false,
-        color: 'blue',
-    });
-    const [player2, setPlayer2] = useState(null);
+    const [turn, setTurn] = useState(null);
+    const [started, setStarted] = useState(null);
+    const [lines, setLines] = useState([]);
+    const [tiles, setTiles] = useState([]);
+    const [winner, setWinner] = useState(null);
 
     const addMessageElement = useCallback((message) => {
         const p = document.createElement('p');
@@ -40,14 +34,52 @@ const GameProvider = ({ children }) => {
         });
 
         on('newPlayer', (playerId) => {
-            addMessageElement(playerId === user.username ? `You joined` : `${playerId} joined`);
+            console.log('newPlayer', playerId);
+            addMessageElement(playerId === user?.username ? `You joined` : `${playerId} joined`);
         });
 
         return () => {
             off('message');
             off('newPlayer');
         };
-    }, [addMessageElement, off, on, roomId, user.username]);
+    }, [addMessageElement, off, on, roomId, user?.username]);
+
+    useEffect(() => {
+        if (!roomId) {
+            return;
+        }
+        on('gameStarted', () => {
+            setStarted(true);
+        });
+        return () => {
+            off('gameStarted');
+        };
+    }, [off, on, roomId]);
+
+    useEffect(() => {
+        if (!roomId) {
+            return;
+        }
+        emit('fetchGameData', roomId);
+        on('gameData', (data) => {
+            setLines(data.lines);
+            setTiles(data.tiles);
+            setWinner(data.winner);
+            setTurn(data.turn);
+            setStarted(data.started);
+        });
+        return () => {
+            off('gameData');
+        };
+    }, [roomId]);
+
+    useEffect(() => {
+        console.log('GameProvider mounted');
+        console.log('State', { turn, started, lines, tiles, winner });
+        return () => {
+            console.log('GameProvider unmounted');
+        };
+    }, [lines, started, tiles, turn, winner]);
 
     const handleStart = () => {
         setStarted(true);
@@ -58,16 +90,17 @@ const GameProvider = ({ children }) => {
     const value = {
         turn,
         setTurn,
-        copied,
-        setCopied,
         started,
         setStarted,
         logRef,
-        player1,
-        player2,
-        setPlayer2,
         addMessageElement,
         handleStart,
+        lines,
+        setLines,
+        tiles,
+        setTiles,
+        winner,
+        setWinner,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

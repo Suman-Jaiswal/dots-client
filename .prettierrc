@@ -9,5 +9,7 @@
     "bracketSpacing": true,
     "arrowParens": "always",
     "proseWrap": "preserve",
-    "bracketSameLine": true
+    "bracketSameLine": true,
+    "singleAttributePerLine": true,
+    "htmlWhitespaceSensitivity": "css"
 }

@@ -1,4 +1,4 @@
-export class Point {
+class Point {
     row;
     col;
     constructor(row, col) {
@@ -11,24 +11,20 @@ export class Point {
     }
 
     toString() {
-        return `${this.row},${this.col}`;
-    }
-
-    static fromString(str) {
-        const [row, col] = str.split(',');
-        return new Point(parseInt(row), parseInt(col));
+        return JSON.stringify(this);
     }
 
     static fromObject(obj) {
         return new Point(obj.row, obj.col);
     }
 
-    static fromArray(arr) {
-        return new Point(arr[0], arr[1]);
+    static fromString(str) {
+        const obj = JSON.parse(str);
+        return Point.fromObject(obj);
     }
 }
 
-export class Line {
+class Line {
     start;
     end;
     constructor(start, end) {
@@ -45,20 +41,115 @@ export class Line {
     }
 
     toString() {
-        return `${this.start.toString()}-${this.end.toString()}`;
-    }
-
-    static fromString(str) {
-        const [start, end] = str.split('-');
-        console.log(start, end);
-        return new Line(Point.fromString(start), Point.fromString(end));
+        return JSON.stringify(this);
     }
 
     static fromObject(obj) {
         return new Line(Point.fromObject(obj.start), Point.fromObject(obj.end));
     }
 
-    static fromArray(arr) {
-        return new Line(Point.fromArray(arr[0]), Point.fromArray(arr[1]));
+    static fromString(str) {
+        const obj = JSON.parse(str);
+        return Line.fromObject(obj);
     }
 }
+
+class Tile {
+    point;
+    playerId;
+
+    constructor(point, playerId) {
+        this.point = point;
+        this.playerId = playerId;
+    }
+
+    toString() {
+        return JSON.stringify(this);
+    }
+
+    static fromObject(obj) {
+        return new Tile(Point.fromObject(obj.point), obj.playerId);
+    }
+
+    static fromString(json) {
+        const obj = JSON.parse(json);
+        return Tile.fromObject(obj);
+    }
+}
+
+class Player {
+    username;
+    score;
+    avatar;
+    connected;
+
+    constructor(username, score, avatar, connected = true) {
+        this.username = username;
+        this.score = score;
+        this.avatar = avatar;
+        this.connected = connected;
+    }
+
+    toString() {
+        return JSON.stringify(this);
+    }
+
+    static fromObject(obj) {
+        return new Player(obj.username, obj.score, obj.avatar, obj.connected);
+    }
+
+    static fromString(json) {
+        const obj = JSON.parse(json);
+        return Player.fromObject(obj);
+    }
+}
+
+class Game {
+    roomId;
+    players = [];
+    turn = '';
+    winner = '';
+    lines = [];
+    tiles = [];
+    started;
+
+    constructor(
+        roomId,
+        players = [],
+        turn = '',
+        winner = [],
+        lines = [],
+        tiles = [],
+        started = false
+    ) {
+        this.roomId = roomId;
+        this.players = players;
+        this.turn = turn;
+        this.winner = winner;
+        this.lines = lines;
+        this.tiles = tiles;
+    }
+
+    toString() {
+        return JSON.stringify(this);
+    }
+
+    static fromObject(obj) {
+        return new Game(
+            obj.roomId,
+            obj.players.map((player) => Player.fromObject(player)),
+            obj.turn,
+            Player.fromObject(obj.winner),
+            obj.lines.map((line) => Line.fromObject(line)),
+            obj.tiles.map((tile) => Tile.fromObject(tile)),
+            obj.started
+        );
+    }
+
+    static fromString(json) {
+        const obj = JSON.parse(json);
+        return Game.fromObject(obj);
+    }
+}
+
+export { Game, Line, Player, Point, Tile };

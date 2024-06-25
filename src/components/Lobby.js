@@ -44,7 +44,9 @@ const Lobby = () => {
                             value={roomIdInput}
                             onChange={(e) => setRoomIdInputInput(e.target.value)}
                         />
-                        <Button size="lg" onClick={handleJoinRoom}>
+                        <Button
+                            size="lg"
+                            onClick={handleJoinRoom}>
                             Join Room
                         </Button>
                     </InputGroup>

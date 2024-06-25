@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { useGame } from '../hooks/useGame';
+import useSocket from '../hooks/useSocket';
 import { Line, Point } from './pojo';
 
-const DotGrid = ({ rows, cols, player1, player2, socket, roomId, turn, addMessageEl }) => {
-    const [lines, setLines] = useState([]);
+const DotGrid = ({ rows, cols }) => {
+    const { lines, tiles, setTiles, setLines, player1, player2, started, roomId, startGame } =
+        useGame();
+    const turn = true;
+    const { on, off, emit } = useSocket();
     const [tempLine, setTempLine] = useState(null);
     const startDot = useRef(null);
-    const [tiles, setTiles] = useState([]);
 
     const handleDotMouseDown = (row, col) => {
         startDot.current = { row, col };
@@ -95,7 +100,7 @@ const DotGrid = ({ rows, cols, player1, player2, socket, roomId, turn, addMessag
                 }
             }
         },
-        [checkIfTilePossible, cols, rows, tiles]
+        [checkIfTilePossible, cols, rows, setTiles, tiles]
     );
 
     const handleDotMouseUp = () => {
@@ -114,9 +119,8 @@ const DotGrid = ({ rows, cols, player1, player2, socket, roomId, turn, addMessag
                     return;
                 }
                 setLines([...lines, newLine]);
-                socket.emit('move', { roomId, line: newLine.toString() });
-                addMessageEl(`You made a move: ${newLine.toString()}`);
-                makePossiblePoints(newLine, player1.color);
+                emit('move', { roomId, line: newLine.toString() });
+                makePossiblePoints(newLine, 'blue');
                 const audioEl = document.createElement('audio');
                 audioEl.src = 'connect.wav';
                 audioEl.play();
@@ -213,18 +217,75 @@ const DotGrid = ({ rows, cols, player1, player2, socket, roomId, turn, addMessag
     };
 
     useEffect(() => {
-        socket.on('move', (data) => {
+        on('move', (data) => {
             const { line } = data;
             const newLine = Line.fromString(line);
 
             setLines([...lines, newLine]);
-            makePossiblePoints(newLine, player2?.color);
+            makePossiblePoints(newLine, 'red');
         });
-    }, [lines, makePossiblePoints, player2?.color, socket]);
+        return () => {
+            off('move');
+        };
+    }, [lines, makePossiblePoints, off, on, player2?.color, setLines]);
+
+    if (!started) {
+        return (
+            <div
+                style={{
+                    position: 'relative',
+                }}
+                className="dot-grid"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleDotMouseUp}>
+                <div
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        position: 'absolute',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        background: 'linear-gradient(45deg, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0.8)',
+                    }}>
+                    <Button
+                        style={{
+                            width: 200,
+                            height: 100,
+                            fontSize: 50,
+                            fontWeight: 'bold',
+                        }}
+                        onClick={startGame}>
+                        Start
+                    </Button>
+                </div>
+                <svg
+                    width={cols * 50}
+                    height={rows * 50}>
+                    {Array.from({ length: rows }).map((_, rowIndex) =>
+                        Array.from({ length: cols }).map((_, colIndex) => (
+                            <circle
+                                key={`dot-${rowIndex}-${colIndex}`}
+                                cx={colIndex * 50 + 25}
+                                cy={rowIndex * 50 + 25}
+                                r="6"
+                                fill="gray"
+                            />
+                        ))
+                    )}
+                </svg>
+            </div>
+        );
+    }
 
     return (
-        <div className="dot-grid" onMouseMove={handleMouseMove} onMouseUp={handleDotMouseUp}>
-            <svg width={cols * 50} height={rows * 50}>
+        <div
+            className="dot-grid"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleDotMouseUp}>
+            <svg
+                width={cols * 50}
+                height={rows * 50}>
                 {renderLines()}
                 {renderTempLine()}
                 {Array.from({ length: rows }).map((_, rowIndex) =>
