@@ -1,5 +1,6 @@
 export class Point {
-  row; col;
+  row;
+  col;
   constructor(row, col) {
     this.row = row;
     this.col = col;
@@ -28,7 +29,8 @@ export class Point {
 }
 
 export class Line {
-  start; end;
+  start;
+  end;
   constructor(start, end) {
     this.start = start;
     this.end = end;
@@ -36,7 +38,10 @@ export class Line {
 
   equals(line) {
     console.log(this.start, line.start, this.end, line.end);
-    return ((this.start.equals(line.start) && this.end.equals(line.end)) || (this.start.equals(line.end) && this.end.equals(line.start)));
+    return (
+      (this.start.equals(line.start) && this.end.equals(line.end)) ||
+      (this.start.equals(line.end) && this.end.equals(line.start))
+    );
   }
 
   toString() {

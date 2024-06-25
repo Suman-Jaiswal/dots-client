@@ -2,12 +2,10 @@ import { signInWithPopup } from 'firebase/auth';
 import { auth, googleAuthProvider } from '../firebase';
 
 const Login = () => {
-
   const onLogin = async () => {
     try {
       await signInWithPopup(auth, googleAuthProvider);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   };

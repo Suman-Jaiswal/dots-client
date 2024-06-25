@@ -3,7 +3,9 @@ import io from 'socket.io-client';
 import { USE_LOCAL_SERVER } from '../constants';
 import useUser from '../hooks/useUser';
 
-const url = USE_LOCAL_SERVER ? process.env.REACT_APP_LOCAL_SOCKET_URL : process.env.REACT_APP_SOCKET_URL
+const url = USE_LOCAL_SERVER
+  ? process.env.REACT_APP_LOCAL_SOCKET_URL
+  : process.env.REACT_APP_SOCKET_URL;
 
 const SocketContext = createContext();
 
@@ -19,12 +21,11 @@ const SocketProvider = ({ children }) => {
       const newSocket = io(url, {
         auth: {
           user: user,
-          secret: process.env.REACT_APP_SECRET
-        }
+          secret: process.env.REACT_APP_SECRET,
+        },
       });
       setSocket(newSocket);
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
     }
   }, [user]);
@@ -42,7 +43,7 @@ const SocketProvider = ({ children }) => {
       return () => {
         socket.off('connect');
         socket.off('disconnect');
-      }
+      };
     }
   }, [socket]);
 
@@ -53,7 +54,7 @@ const SocketProvider = ({ children }) => {
       });
       return () => {
         socket.off('authError');
-      }
+      };
     }
   }, [socket]);
 
@@ -61,15 +62,10 @@ const SocketProvider = ({ children }) => {
     console.log('SocketProvider mounted');
     return () => {
       console.log('SocketProvider unmounted');
-    }
+    };
   }, []);
 
-  return (
-    <SocketContext.Provider value={socket}>
-      {children}
-    </SocketContext.Provider>
-  );
+  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 };
 
 export { SocketContext, SocketProvider };
-

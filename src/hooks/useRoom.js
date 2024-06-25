@@ -3,12 +3,7 @@ import { RoomContext } from '../contexts/RoomContext';
 import useSocket from './useSocket';
 
 const useRoom = () => {
-  const { roomId,
-    roomJoined,
-    roomLeft,
-    roomCreated,
-    roomError
-  } = useContext(RoomContext);
+  const { roomId, roomJoined, roomLeft, roomCreated, roomError } = useContext(RoomContext);
 
   const { emit } = useSocket();
 
@@ -33,7 +28,7 @@ const useRoom = () => {
     roomError,
     createRoom,
     joinRoom,
-    leaveRoom
+    leaveRoom,
   };
 };
 

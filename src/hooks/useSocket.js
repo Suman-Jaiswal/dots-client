@@ -20,7 +20,7 @@ const useSocket = () => {
     if (socket) {
       socket.off(event, callback);
     }
-  }
+  };
 
   return { socket, emit, on, off };
 };

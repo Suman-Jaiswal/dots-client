@@ -19,7 +19,7 @@ const GameProvider = ({ children }) => {
     name: user?.username,
     points: 0,
     turn: false,
-    color: 'blue'
+    color: 'blue',
   });
   const [player2, setPlayer2] = useState(null);
 
@@ -70,12 +70,7 @@ const GameProvider = ({ children }) => {
     handleStart,
   };
 
-  return (
-    <GameContext.Provider value={value}>
-      {children}
-    </GameContext.Provider>
-  );
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };
 
 export { GameContext, GameProvider };
-

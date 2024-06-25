@@ -15,16 +15,16 @@ const RoomProvider = ({ children }) => {
     console.log('RoomProvider mounted');
     return () => {
       console.log('RoomProvider unmounted');
-    }
+    };
   }, []);
 
   useEffect(() => {
     const storedRoomId = localStorage.getItem('roomId');
     if (!storedRoomId) {
-      return
+      return;
     }
     if (!socket) {
-      return
+      return;
     }
 
     emit('joinRoom', storedRoomId);
@@ -71,15 +71,17 @@ const RoomProvider = ({ children }) => {
   }, [off, on, setRoomCreated, setRoomError, setRoomId, setRoomJoined, socket]);
 
   return (
-    <RoomContext.Provider value={{
-      roomId,
-      roomJoined,
-      roomCreated,
-      roomError,
-    }}>
+    <RoomContext.Provider
+      value={{
+        roomId,
+        roomJoined,
+        roomCreated,
+        roomError,
+      }}
+    >
       {children}
     </RoomContext.Provider>
   );
-}
+};
 
 export { RoomContext, RoomProvider };

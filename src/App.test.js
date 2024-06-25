@@ -20,14 +20,13 @@ test('renders learn react link', () => {
   console.log(line2.equals(line4)); // true
   console.log(line3.equals(line4)); // true
 
-  expect(point1.equals(point2)).toBe(true)
-  expect(point1.equals(point3)).toBe(false)
+  expect(point1.equals(point2)).toBe(true);
+  expect(point1.equals(point3)).toBe(false);
 
-  expect(line1.equals(line2)).toBe(true)
-  expect(line1.equals(line3)).toBe(true)
-  expect(line1.equals(line4)).toBe(true)
-  expect(line2.equals(line3)).toBe(true)
-  expect(line2.equals(line4)).toBe(true)
-  expect(line3.equals(line4)).toBe(true)
-
+  expect(line1.equals(line2)).toBe(true);
+  expect(line1.equals(line3)).toBe(true);
+  expect(line1.equals(line4)).toBe(true);
+  expect(line2.equals(line3)).toBe(true);
+  expect(line2.equals(line4)).toBe(true);
+  expect(line3.equals(line4)).toBe(true);
 });

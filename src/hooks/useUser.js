@@ -2,7 +2,8 @@ import { useContext } from 'react';
 import { UserContext } from '../contexts/UserContext';
 
 const useUser = () => {
-  const { user, username, error, setUser, setUsername, setError, randomizeUsername } = useContext(UserContext);
+  const { user, username, error, setUser, setUsername, setError, randomizeUsername } =
+    useContext(UserContext);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -15,14 +16,14 @@ const useUser = () => {
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
     setError(null);
-  }
+  };
   return {
     user,
     username,
     error,
     handleChange,
-    randomizeUsername
+    randomizeUsername,
   };
-}
+};
 
 export default useUser;
