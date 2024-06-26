@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, FormControl, Navbar } from 'react-bootstrap';
 import useUser from '../hooks/useUser';
 
-export default function Header() {
+export default function Header({ disabled = false }) {
     const { username, randomizeUsername, handleChange } = useUser();
     return (
         <Navbar
@@ -16,12 +16,15 @@ export default function Header() {
                     type="text"
                     value={username}
                     onChange={handleChange}
+                    disabled={disabled}
                 />
-                <Button
-                    variant="success"
-                    onClick={randomizeUsername}>
-                    Random
-                </Button>
+                {!disabled && (
+                    <Button
+                        variant="success"
+                        onClick={randomizeUsername}>
+                        Random
+                    </Button>
+                )}
             </div>
         </Navbar>
     );

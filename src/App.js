@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from './components/Header';
 import Lobby from './components/Lobby';
 import { SocketProvider } from './contexts/SocketContext';
 
@@ -11,7 +10,6 @@ const App = () => {
                 borderLeft: '1px solid #ddd',
                 borderRight: '1px solid #ddd',
             }}>
-            <Header />
             <SocketProvider>
                 <Lobby />
             </SocketProvider>

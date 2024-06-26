@@ -46,7 +46,7 @@ const useRoom = () => {
         };
 
         const handleRoomError = (message) => {
-            console.error(message);
+            console.log(message);
             dispatch({ type: roomActions.ROOM_ERROR, payload: message });
             localStorage.removeItem('roomId');
         };

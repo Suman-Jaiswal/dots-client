@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, FormControl, InputGroup } from 'react-bootstrap';
 import useRoom from '../hooks/useRoom';
 import useUser from '../hooks/useUser';
+import Header from './Header';
 import Room from './Room';
 
 const Lobby = () => {
@@ -32,6 +33,7 @@ const Lobby = () => {
 
     return (
         <div>
+            <Header disabled={roomJoined} />
             {error ? (
                 <div className="mt-5 text-center text-danger">{error}</div>
             ) : roomJoined ? (
