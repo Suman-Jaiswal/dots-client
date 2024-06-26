@@ -1,11 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { USE_LOCAL_SERVER } from '../constants';
 import useUser from '../hooks/useUser';
 
-const url = USE_LOCAL_SERVER
-    ? process.env.REACT_APP_LOCAL_SOCKET_URL
-    : process.env.REACT_APP_SOCKET_URL;
+const url =
+    process.env.NODE_ENV === 'development'
+        ? process.env.REACT_APP_LOCAL_SOCKET_URL
+        : process.env.REACT_APP_SOCKET_URL;
 
 const SocketContext = createContext();
 
