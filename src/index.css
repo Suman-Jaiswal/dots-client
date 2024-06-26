@@ -17,7 +17,7 @@ code {
 }
 
 .dot-grid svg {
-    background-color: #f0f0f0;
+    background: linear-gradient(45deg, rgba(255, 0, 0, 0.308), rgba(0, 0, 255, 0.397));
     border: 2px solid #ccc;
 }
 

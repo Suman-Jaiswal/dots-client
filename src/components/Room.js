@@ -60,8 +60,8 @@ export default function Room({ roomId, leaveRoom, player1, player2, isFirstCame 
             <div className="row mt-3">
                 <div className="col-7 justify-content-start">
                     <GameBoard
-                        rows={12}
-                        cols={12}
+                        rows={10}
+                        cols={10}
                         roomId={roomId}
                         isFirstCame={isFirstCame}
                         logRef={logRef}

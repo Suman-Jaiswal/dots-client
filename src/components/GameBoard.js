@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import useGame from '../hooks/useGame';
 import { Line, Point } from './pojo';
@@ -9,6 +9,14 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
         [player1, player2],
         logRef
     );
+
+    const player1Score = useMemo(() => {
+        return playerScores.filter((score) => score.username === player1)[0]?.score || 0;
+    }, [player1, playerScores]);
+
+    const player2Score = useMemo(() => {
+        return playerScores.filter((score) => score.username === player2)[0]?.score || 0;
+    }, [player2, playerScores]);
 
     const [tempLine, setTempLine] = useState(null);
     const startDot = useRef(null);
@@ -130,6 +138,8 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
         });
     };
 
+    console.log(playerScores);
+
     if (!started) {
         return (
             <div
@@ -232,39 +242,44 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
                 </svg>
             </div>
             <div
-                className="bg-light row p-3 ms-0 mt-4"
-                style={{ width: 600, border: '1px solid #ddd' }}>
+                className="bg-light row p-3 ms-0 mt-4 w-100"
+                style={{ border: '1px solid #ddd' }}>
                 <div
-                    className="col d-flex flex-column align-items-center"
-                    style={{ color: 'blue' }}>
-                    <div>
-                        {' '}
-                        <b>{player1}</b>{' '}
+                    className="col d-flex flex-column align-items-center rounded-pill"
+                    style={{ border: turn === player1 ? '3px solid blue' : 'none' }}>
+                    <div style={{ color: 'blue' }}>
+                        <b>{player1}</b>
                     </div>
-                    <div>
-                        <b>Score: </b> {playerScores.map((p) => p.username === player1).score}
-                    </div>
+                    <div>Score: {player1Score}</div>
                     {/* <div><b>Time left: </b>52s</div> */}
                 </div>
-                <div className="col d-flex justify-content-center">
+
+                <div
+                    className="col fs-1"
+                    style={{ opacity: turn === player1 ? 1 : 0 }}>
+                    ⬅
+                </div>
+                <div className="col d-flex justify-content-center align-items-center">
                     <b>V/S</b>
                 </div>
                 <div
-                    className="col d-flex flex-column align-items-center align-items-center"
-                    style={{ color: 'red' }}>
+                    className="col fs-1"
+                    style={{ opacity: turn === player2 ? 1 : 0 }}>
+                    ➡
+                </div>
+
+                <div
+                    className="col d-flex flex-column align-items-center rounded-pill"
+                    style={{ border: turn === player2 ? '3px solid red' : 'none' }}>
                     {!player2 ? (
                         <div className="">Waiting for Opponent...</div>
                     ) : (
-                        <div>
-                            <div>
-                                {' '}
-                                <b>{player2}</b>{' '}
+                        <>
+                            <div style={{ color: 'red' }}>
+                                <b>{player2}</b>
                             </div>
-                            <div>
-                                <b>Score: </b>{' '}
-                                {playerScores.map((p) => p.username === player2).score}
-                            </div>
-                        </div>
+                            <div>Score: {player2Score}</div>
+                        </>
                     )}
                 </div>
             </div>
