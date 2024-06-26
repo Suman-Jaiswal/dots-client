@@ -1,20 +1,44 @@
-import { Line, Point } from './components/pojo';
+import React, { useState } from 'react';
+import useRoom from './hooks/useRoom';
 
-const point1 = new Point(1, 2);
-const point2 = new Point(1, 2);
-const point3 = new Point(2, 3);
+const Test = () => {
+    const {
+        roomId,
+        roomCreated,
+        roomJoined,
+        roomLeft,
+        roomError,
+        player1,
+        player2,
+        createRoom,
+        joinRoom,
+        leaveRoom,
+    } = useRoom();
 
-console.log(point1.equals(point2)); // true
-console.log(point1.equals(point3)); // false
+    const [input, setInput] = useState('');
 
-const line1 = new Line(point1, point3);
-const line2 = new Line(point1, point3);
-const line3 = new Line(point3, point1);
-const line4 = new Line(point2, point3);
+    return (
+        <div>
+            {roomCreated && <p>Room Created with ID: {roomId}</p>}
+            <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+            />
+            {roomJoined && <p>Joined Room with ID: {roomId}</p>}
+            {roomLeft && <p>Left the Room</p>}
+            {roomError && <p>Error: {roomError}</p>}
+            <div>
+                <button onClick={createRoom}>Create Room</button>
+                <button onClick={() => joinRoom(input)}>Join Room</button>
+                <button onClick={leaveRoom}>Leave Room</button>
+            </div>
+            <div>
+                <p>Player 1: {player1}</p>
+                <p>Player 2: {player2}</p>
+            </div>
+        </div>
+    );
+};
 
-console.log(line1.equals(line2)); // true
-console.log(line1.equals(line3)); // true (reversed order)
-console.log(line1.equals(line4)); // true (point1 equals point2)
-console.log(line2.equals(line3)); // true
-console.log(line2.equals(line4)); // true
-console.log(line3.equals(line4)); // true
+export default Test;

@@ -1,7 +1,6 @@
 import React from 'react';
 import Header from './components/Header';
 import Lobby from './components/Lobby';
-import { RoomProvider } from './contexts/RoomContext';
 import { SocketProvider } from './contexts/SocketContext';
 
 const App = () => {
@@ -14,9 +13,7 @@ const App = () => {
             }}>
             <Header />
             <SocketProvider>
-                <RoomProvider>
-                    <Lobby />
-                </RoomProvider>
+                <Lobby />
             </SocketProvider>
         </div>
     );

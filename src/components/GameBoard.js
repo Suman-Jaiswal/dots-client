@@ -1,110 +1,25 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { useGame } from '../hooks/useGame';
-import useSocket from '../hooks/useSocket';
+import useGame from '../hooks/useGame';
 import { Line, Point } from './pojo';
 
-const DotGrid = ({ rows, cols }) => {
-    const { lines, tiles, setTiles, setLines, player1, player2, started, roomId, startGame } =
-        useGame();
-    const turn = true;
-    const { on, off, emit } = useSocket();
+const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }) => {
+    const { lines, tiles, started, startGame, makeMove, turn } = useGame(
+        roomId,
+        [player1, player2],
+        logRef
+    );
+
     const [tempLine, setTempLine] = useState(null);
     const startDot = useRef(null);
 
     const handleDotMouseDown = (row, col) => {
+        if (turn === player2) return;
         startDot.current = { row, col };
     };
 
-    const checkIfTilePossible = useCallback(
-        (p1, p2, p3, p4) => {
-            const line1 = new Line(p1, p2);
-            const line2 = new Line(p2, p3);
-            const line3 = new Line(p3, p4);
-
-            let check = [false, false, false];
-
-            lines.forEach((line) => {
-                if (line1.equals(line)) {
-                    check[0] = true;
-                } else if (line2.equals(line)) {
-                    check[1] = true;
-                } else if (line3.equals(line)) {
-                    check[2] = true;
-                }
-            });
-
-            console.log('check', check);
-
-            if (check.includes(false)) {
-                return false;
-            }
-
-            return true;
-        },
-        [lines]
-    );
-
-    const makePossiblePoints = useCallback(
-        (line, color) => {
-            const { start, end } = line;
-
-            // lineIsHorizontal
-            if (start.row === end.row) {
-                let pu2, pu3, pd2, pd3, p4;
-                const p1 = start.col < end.col ? start : end;
-                p4 = new Point(p1.row, p1.col + 1);
-                pd2 = new Point(p1.row + 1, p1.col);
-                pd3 = new Point(p1.row + 1, p1.col + 1);
-                pu2 = new Point(p1.row - 1, p1.col);
-                pu3 = new Point(p1.row - 1, p1.col + 1);
-                if (p1.row === 0) {
-                    if (checkIfTilePossible(p1, pd2, pd3, p4)) {
-                        setTiles([...tiles, { point: p1, color }]);
-                    }
-                } else if (p1.row === rows - 1) {
-                    if (checkIfTilePossible(p1, pu2, pu3, p4)) {
-                        setTiles([...tiles, { point: pu2, color }]);
-                    }
-                } else {
-                    if (checkIfTilePossible(p1, pd2, pd3, p4)) {
-                        setTiles([...tiles, { point: p1, color }]);
-                    }
-                    if (checkIfTilePossible(p1, pu2, pu3, p4)) {
-                        setTiles([...tiles, { point: pu2, color }]);
-                    }
-                }
-            } else if (start.col === end.col) {
-                let pr2, pr3, pl2, pl3, p4;
-                const p1 = start.row < end.row ? start : end;
-                p4 = new Point(p1.row + 1, p1.col);
-                pr2 = new Point(p1.row, p1.col + 1);
-                pr3 = new Point(p1.row + 1, p1.col + 1);
-                pl2 = new Point(p1.row, p1.col - 1);
-                pl3 = new Point(p1.row + 1, p1.col - 1);
-                if (p1.col === 0) {
-                    if (checkIfTilePossible(p1, pr2, pr3, p4)) {
-                        setTiles([...tiles, { point: p1, color }]);
-                    }
-                } else if (p1.col === cols - 1) {
-                    if (checkIfTilePossible(p1, pl2, pl3, p4)) {
-                        setTiles([...tiles, { point: pl2, color }]);
-                    }
-                } else {
-                    if (checkIfTilePossible(p1, pr2, pr3, p4)) {
-                        setTiles([...tiles, { point: p1, color }]);
-                    }
-                    if (checkIfTilePossible(p1, pl2, pl3, p4)) {
-                        setTiles([...tiles, { point: pl2, color }]);
-                    }
-                }
-            }
-        },
-        [checkIfTilePossible, cols, rows, setTiles, tiles]
-    );
-
     const handleDotMouseUp = () => {
-        if (!turn) return;
+        if (turn === player2) return;
         if (startDot.current) {
             if (tempLine) {
                 const start = new Point(tempLine.start.row, tempLine.start.col);
@@ -118,9 +33,7 @@ const DotGrid = ({ rows, cols }) => {
                     setTempLine(null);
                     return;
                 }
-                setLines([...lines, newLine]);
-                emit('move', { roomId, line: newLine.toString() });
-                makePossiblePoints(newLine, 'blue');
+                makeMove(newLine.toString());
                 const audioEl = document.createElement('audio');
                 audioEl.src = 'connect.wav';
                 audioEl.play();
@@ -132,7 +45,7 @@ const DotGrid = ({ rows, cols }) => {
     };
 
     const handleMouseMove = (event) => {
-        if (!turn) return;
+        if (turn === player2) return;
         if (startDot.current) {
             const svg = event.target.closest('svg');
             const rect = svg?.getBoundingClientRect();
@@ -201,7 +114,8 @@ const DotGrid = ({ rows, cols }) => {
 
     const renderTiles = () => {
         return tiles.map((tile, index) => {
-            const { point, color } = tile;
+            const { point, player } = tile;
+            const color = player === player1 ? 'red' : 'blue';
             return (
                 <rect
                     key={`tile-${index}`}
@@ -216,28 +130,13 @@ const DotGrid = ({ rows, cols }) => {
         });
     };
 
-    useEffect(() => {
-        on('move', (data) => {
-            const { line } = data;
-            const newLine = Line.fromString(line);
-
-            setLines([...lines, newLine]);
-            makePossiblePoints(newLine, 'red');
-        });
-        return () => {
-            off('move');
-        };
-    }, [lines, makePossiblePoints, off, on, player2?.color, setLines]);
-
     if (!started) {
         return (
             <div
                 style={{
                     position: 'relative',
                 }}
-                className="dot-grid"
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleDotMouseUp}>
+                className="dot-grid">
                 <div
                     style={{
                         width: '100%',
@@ -248,16 +147,42 @@ const DotGrid = ({ rows, cols }) => {
                         alignItems: 'center',
                         background: 'linear-gradient(45deg, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0.8)',
                     }}>
-                    <Button
-                        style={{
-                            width: 200,
-                            height: 100,
-                            fontSize: 50,
-                            fontWeight: 'bold',
-                        }}
-                        onClick={startGame}>
-                        Start
-                    </Button>
+                    {!player2 ? (
+                        <div
+                            className="text-center"
+                            style={{
+                                width: 200,
+                                height: 100,
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                color: 'white',
+                            }}>
+                            Waiting for Opponent to join...
+                        </div>
+                    ) : isFirstCame ? (
+                        <Button
+                            style={{
+                                width: 200,
+                                height: 100,
+                                fontSize: 50,
+                                fontWeight: 'bold',
+                            }}
+                            onClick={() => startGame([player1, player2])}>
+                            Start
+                        </Button>
+                    ) : (
+                        <div
+                            className="text-center"
+                            style={{
+                                width: 200,
+                                height: 100,
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                color: 'white',
+                            }}>
+                            Opponent will start the game
+                        </div>
+                    )}
                 </div>
                 <svg
                     width={cols * 50}
@@ -291,7 +216,7 @@ const DotGrid = ({ rows, cols }) => {
                 {Array.from({ length: rows }).map((_, rowIndex) =>
                     Array.from({ length: cols }).map((_, colIndex) => (
                         <circle
-                            style={{ cursor: turn ? 'pointer' : '' }}
+                            style={{ cursor: turn === player1 ? 'pointer' : '' }}
                             key={`dot-${rowIndex}-${colIndex}`}
                             cx={colIndex * 50 + 25}
                             cy={rowIndex * 50 + 25}
@@ -308,4 +233,4 @@ const DotGrid = ({ rows, cols }) => {
     );
 };
 
-export default DotGrid;
+export default GameBoard;

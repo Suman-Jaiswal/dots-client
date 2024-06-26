@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from 'react-bootstrap';
-import { useGame } from '../hooks/useGame';
-import useRoom from '../hooks/useRoom';
-import DotGrid from './DotGrid';
+import useSocket from '../hooks/useSocket';
+import GameBoard from './GameBoard';
 
-const Game = () => {
-    const { logRef } = useGame();
-    const { roomId, player1, player2, leaveRoom } = useRoom();
-    const [copied, setCopied] = useState(false);
+export default function Room({ roomId, leaveRoom, player1, player2, isFirstCame }) {
+    const [copied, setCopied] = React.useState(false);
+    const logRef = useRef(null);
+    const { on, off } = useSocket();
 
-    const { started, turn } = useGame();
+    const addMessageElement = (message) => {
+        const p = document.createElement('p');
+        p.textContent = message;
+        logRef.current.appendChild(p);
+        logRef.current.scrollTop = logRef.current.scrollHeight;
+    };
+
+    useEffect(() => {
+        if (!logRef.current) {
+            return;
+        }
+        addMessageElement('You joined');
+    }, []);
+
+    useEffect(() => {
+        if (!logRef.current) {
+            return;
+        }
+        on('message', (data) => {
+            addMessageElement(data);
+        });
+        return () => {
+            off('message');
+        };
+    }, [on, off]);
 
     return (
         <div className="mt-3 px-4">
@@ -26,20 +49,24 @@ const Game = () => {
                         {copied ? 'Copied' : 'Copy'}
                     </span>
                 </div>
-                {started && <div className="h5">{turn ? 'Your turn' : "Opponent's turn"}</div>}
                 <div>
                     <Button
                         variant="danger"
-                        onClick={() => leaveRoom()}>
+                        onClick={leaveRoom}>
                         Leave
                     </Button>
                 </div>
             </div>
             <div className="row mt-3">
                 <div className="col-7 justify-content-start">
-                    <DotGrid
+                    <GameBoard
                         rows={12}
                         cols={12}
+                        roomId={roomId}
+                        isFirstCame={isFirstCame}
+                        logRef={logRef}
+                        player1={player1}
+                        player2={player2}
                     />
 
                     <div
@@ -92,6 +119,4 @@ const Game = () => {
             </div>
         </div>
     );
-};
-
-export default Game;
+}

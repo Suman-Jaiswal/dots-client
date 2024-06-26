@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { Button, FormControl, InputGroup } from 'react-bootstrap';
-import { GameProvider } from '../contexts/GameContext';
 import useRoom from '../hooks/useRoom';
 import useUser from '../hooks/useUser';
-import Game from './Game';
+import Room from './Room';
 
 const Lobby = () => {
     const { error } = useUser();
-    const { joinRoom, createRoom, roomJoined, roomError } = useRoom();
+    const {
+        roomId,
+        roomJoined,
+        roomError,
+        player1,
+        player2,
+        isFirstCame,
+        createRoom,
+        joinRoom,
+        leaveRoom,
+    } = useRoom();
+
     const [roomIdInput, setRoomIdInputInput] = useState('');
 
     const handleCreateRoom = () => {
@@ -25,9 +35,13 @@ const Lobby = () => {
             {error ? (
                 <div className="mt-5 text-center text-danger">{error}</div>
             ) : roomJoined ? (
-                <GameProvider>
-                    <Game />
-                </GameProvider>
+                <Room
+                    roomId={roomId}
+                    leaveRoom={leaveRoom}
+                    player1={player1}
+                    player2={player2}
+                    isFirstCame={isFirstCame}
+                />
             ) : (
                 <div className="d-flex mt-5 w-50 m-auto">
                     <Button
