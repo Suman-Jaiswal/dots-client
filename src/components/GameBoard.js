@@ -149,7 +149,7 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
                 className="dot-grid">
                 <div
                     style={{
-                        width: '100%',
+                        width: cols * 50,
                         height: '100%',
                         position: 'absolute',
                         display: 'flex',
