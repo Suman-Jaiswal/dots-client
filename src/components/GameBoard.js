@@ -34,8 +34,6 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
                 const end = new Point(tempLine.end.row, tempLine.end.col);
                 const newLine = new Line(start, end);
 
-                console.log('newLine', newLine);
-
                 if (lines.some((line) => line.equals(newLine))) {
                     startDot.current = null;
                     setTempLine(null);
@@ -137,8 +135,6 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
             );
         });
     };
-
-    console.log(playerScores);
 
     if (!started) {
         return (
