@@ -56,11 +56,11 @@ class Line {
 
 class Tile {
     point;
-    playerId;
+    player;
 
-    constructor(point, playerId) {
+    constructor(point, player) {
         this.point = point;
-        this.playerId = playerId;
+        this.player = player;
     }
 
     toString() {
@@ -68,7 +68,7 @@ class Tile {
     }
 
     static fromObject(obj) {
-        return new Tile(Point.fromObject(obj.point), obj.playerId);
+        return new Tile(Point.fromObject(obj.point), obj.player);
     }
 
     static fromString(json) {

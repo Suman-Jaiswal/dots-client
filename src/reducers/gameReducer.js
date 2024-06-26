@@ -3,6 +3,7 @@ export const initialState = {
     started: false,
     lines: [],
     tiles: [],
+    playerScores: [],
     winner: null,
 };
 
@@ -12,6 +13,7 @@ export const gameActions = {
     ADD_LINES: 'ADD_LINES',
     ADD_TILES: 'ADD_TILES',
     SET_WINNER: 'SET_WINNER',
+    SET_PLAYER_SCORES: 'SET_PLAYER_SCORES',
 };
 
 export const gameReducer = (state, action) => {
@@ -26,6 +28,8 @@ export const gameReducer = (state, action) => {
             return { ...state, tiles: [...state.tiles, ...action.payload] };
         case gameActions.SET_WINNER:
             return { ...state, winner: action.payload };
+        case gameActions.SET_PLAYER_SCORES:
+            return { ...state, playerScores: action.payload };
         default:
             return state;
     }

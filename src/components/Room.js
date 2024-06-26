@@ -68,36 +68,6 @@ export default function Room({ roomId, leaveRoom, player1, player2, isFirstCame 
                         player1={player1}
                         player2={player2}
                     />
-
-                    <div
-                        className="bg-light row p-3 ms-0 mt-4"
-                        style={{ width: 600, border: '1px solid #ddd' }}>
-                        <div
-                            className="col d-flex flex-column align-items-center"
-                            style={{ color: player1?.color }}>
-                            <div>
-                                {' '}
-                                <b>{player1}</b>{' '}
-                            </div>
-                            <div>{/* <b>Points: </b> {player1?.points} */}</div>
-                            {/* <div><b>Time left: </b>52s</div> */}
-                        </div>
-                        <div className="col d-flex justify-content-center">
-                            <b>V/S</b>
-                        </div>
-                        <div
-                            className="col d-flex flex-column align-items-center align-items-center"
-                            style={{ color: player2?.color }}>
-                            {!player2 ? (
-                                <div className="">Waiting for Opponent...</div>
-                            ) : (
-                                <div>
-                                    {' '}
-                                    <b>{player2}</b>{' '}
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
                 <div
                     className="col bg-light"

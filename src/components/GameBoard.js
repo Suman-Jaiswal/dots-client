@@ -4,7 +4,7 @@ import useGame from '../hooks/useGame';
 import { Line, Point } from './pojo';
 
 const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }) => {
-    const { lines, tiles, started, startGame, makeMove, turn } = useGame(
+    const { lines, tiles, started, startGame, makeMove, turn, playerScores } = useGame(
         roomId,
         [player1, player2],
         logRef
@@ -115,7 +115,7 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
     const renderTiles = () => {
         return tiles.map((tile, index) => {
             const { point, player } = tile;
-            const color = player === player1 ? 'red' : 'blue';
+            const color = player === player1 ? 'blue' : 'red';
             return (
                 <rect
                     key={`tile-${index}`}
@@ -204,32 +204,71 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
     }
 
     return (
-        <div
-            className="dot-grid"
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleDotMouseUp}>
-            <svg
-                width={cols * 50}
-                height={rows * 50}>
-                {renderLines()}
-                {renderTempLine()}
-                {Array.from({ length: rows }).map((_, rowIndex) =>
-                    Array.from({ length: cols }).map((_, colIndex) => (
-                        <circle
-                            style={{ cursor: turn === player1 ? 'pointer' : '' }}
-                            key={`dot-${rowIndex}-${colIndex}`}
-                            cx={colIndex * 50 + 25}
-                            cy={rowIndex * 50 + 25}
-                            r="6"
-                            fill="black"
-                            onMouseDown={() => handleDotMouseDown(rowIndex, colIndex)}
-                            onMouseUp={handleDotMouseUp}
-                        />
-                    ))
-                )}
-                {renderTiles()}
-            </svg>
-        </div>
+        <>
+            <div
+                className="dot-grid"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleDotMouseUp}>
+                <svg
+                    width={cols * 50}
+                    height={rows * 50}>
+                    {renderLines()}
+                    {renderTempLine()}
+                    {Array.from({ length: rows }).map((_, rowIndex) =>
+                        Array.from({ length: cols }).map((_, colIndex) => (
+                            <circle
+                                style={{ cursor: turn === player1 ? 'pointer' : '' }}
+                                key={`dot-${rowIndex}-${colIndex}`}
+                                cx={colIndex * 50 + 25}
+                                cy={rowIndex * 50 + 25}
+                                r="6"
+                                fill="black"
+                                onMouseDown={() => handleDotMouseDown(rowIndex, colIndex)}
+                                onMouseUp={handleDotMouseUp}
+                            />
+                        ))
+                    )}
+                    {renderTiles()}
+                </svg>
+            </div>
+            <div
+                className="bg-light row p-3 ms-0 mt-4"
+                style={{ width: 600, border: '1px solid #ddd' }}>
+                <div
+                    className="col d-flex flex-column align-items-center"
+                    style={{ color: 'blue' }}>
+                    <div>
+                        {' '}
+                        <b>{player1}</b>{' '}
+                    </div>
+                    <div>
+                        <b>Score: </b> {playerScores.map((p) => p.username === player1).score}
+                    </div>
+                    {/* <div><b>Time left: </b>52s</div> */}
+                </div>
+                <div className="col d-flex justify-content-center">
+                    <b>V/S</b>
+                </div>
+                <div
+                    className="col d-flex flex-column align-items-center align-items-center"
+                    style={{ color: 'red' }}>
+                    {!player2 ? (
+                        <div className="">Waiting for Opponent...</div>
+                    ) : (
+                        <div>
+                            <div>
+                                {' '}
+                                <b>{player2}</b>{' '}
+                            </div>
+                            <div>
+                                <b>Score: </b>{' '}
+                                {playerScores.map((p) => p.username === player2).score}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </>
     );
 };
 

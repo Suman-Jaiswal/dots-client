@@ -45,15 +45,22 @@ const useGame = (roomId, logRef) => {
         const handleGameOver = (data) => {
             dispatch({ type: gameActions.SET_WINNER, payload: data.winner });
         };
+
+        const handleScore = (playerScores) => {
+            dispatch({ type: gameActions.SET_PLAYER_SCORES, payload: playerScores });
+        };
+
         on('gameStarted', handleGameStarted);
         on('move', handleMove);
         on('tilesCreated', handleTilesCreated);
+        on('score', handleScore);
         on('gameOver', handleGameOver);
         return () => {
             off('gameStarted');
             off('move');
             off('tilesCreated');
             off('gameOver');
+            off('score');
         };
     }, [addMessageElement, off, on, roomId]);
 
@@ -75,6 +82,7 @@ const useGame = (roomId, logRef) => {
                 dispatch({ type: gameActions.SET_WINNER, payload: data.winner });
                 dispatch({ type: gameActions.SET_TURN, payload: data.turn });
                 dispatch({ type: gameActions.SET_STARTED, payload: data.started });
+                dispatch({ type: gameActions.SET_PLAYER_SCORES, payload: data.playerScores });
             });
         };
         fetchGameData();
