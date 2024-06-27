@@ -10,7 +10,7 @@ export default function Room({ roomId, leaveRoom, player1, player2, isFirstCame 
 
     const addMessageElement = (message) => {
         const p = document.createElement('p');
-        p.textContent = message;
+        p.textContent = message.toString();
         logRef.current.appendChild(p);
         logRef.current.scrollTop = logRef.current.scrollHeight;
     };
@@ -60,8 +60,8 @@ export default function Room({ roomId, leaveRoom, player1, player2, isFirstCame 
             <div className="row mt-3">
                 <div className="col-7 justify-content-start">
                     <GameBoard
-                        rows={10}
-                        cols={10}
+                        rows={5}
+                        cols={5}
                         roomId={roomId}
                         isFirstCame={isFirstCame}
                         logRef={logRef}

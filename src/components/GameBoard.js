@@ -4,7 +4,7 @@ import useGame from '../hooks/useGame';
 import { Line, Point } from './pojo';
 
 const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }) => {
-    const { lines, tiles, started, startGame, makeMove, turn, playerScores } = useGame(
+    const { lines, tiles, started, startGame, makeMove, turn, playerScores, winner } = useGame(
         roomId,
         [player1, player2],
         logRef
@@ -136,7 +136,7 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
         });
     };
 
-    if (!started) {
+    if (!started || winner || winner !== '') {
         return (
             <div
                 style={{
@@ -153,7 +153,24 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
                         alignItems: 'center',
                         background: 'linear-gradient(45deg, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0.8)',
                     }}>
-                    {!player2 ? (
+                    {winner || winner !== '' ? (
+                        <div
+                            className="text-center"
+                            style={{
+                                width: 200,
+                                height: 100,
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                color: 'white',
+                            }}>
+                            <div>
+                                {' '}
+                                {winner === 'draw'
+                                    ? 'Game Draw'
+                                    : `${winner === player1 ? 'You' : player2} won`}{' '}
+                            </div>
+                        </div>
+                    ) : !player2 ? (
                         <div
                             className="text-center"
                             style={{

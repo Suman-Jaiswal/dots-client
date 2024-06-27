@@ -2,10 +2,10 @@ import React, { createContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import useUser from '../hooks/useUser';
 
-const url =
-    process.env.NODE_ENV === 'development'
-        ? process.env.REACT_APP_LOCAL_SOCKET_URL
-        : process.env.REACT_APP_SOCKET_URL;
+const url = process.env.REACT_APP_SOCKET_URL;
+// process.env.NODE_ENV === 'development'
+//     ? process.env.REACT_APP_LOCAL_SOCKET_URL
+//     : process.env.REACT_APP_SOCKET_URL;
 
 const SocketContext = createContext();
 
