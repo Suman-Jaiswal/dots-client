@@ -84,9 +84,6 @@ const useRoom = () => {
 
     useEffect(() => {
         console.log('RoomProvider mounted');
-        return () => {
-            console.log('RoomProvider unmounted');
-        };
     }, [state]);
 
     return {

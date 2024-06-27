@@ -12,13 +12,8 @@ code {
 
 .dot-grid {
     display: flex;
-    /* justify-content: center; */
+    justify-content: center;
     align-items: center;
-}
-
-.dot-grid svg {
-    background: linear-gradient(45deg, rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.5));
-    border: 2px solid #ccc;
 }
 
 .dot-grid circle {

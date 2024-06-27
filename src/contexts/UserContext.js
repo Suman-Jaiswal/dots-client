@@ -36,9 +36,6 @@ const UserProvider = ({ children }) => {
 
     useEffect(() => {
         console.log('UserProvider mounted');
-        return () => {
-            console.log('UserProvider unmounted');
-        };
     }, []);
 
     return (

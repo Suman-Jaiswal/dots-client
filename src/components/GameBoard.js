@@ -28,7 +28,8 @@ const GameBoard = ({
         startDot.current = { row, col };
     };
 
-    const handleDotMouseUp = () => {
+    const handleDotMouseUp = (e) => {
+        e.preventDefault();
         if (turn === player2) return;
         if (startDot.current) {
             if (tempLine) {
@@ -141,7 +142,7 @@ const GameBoard = ({
     const overlay = (element) => (
         <div
             style={{
-                width: cols * 50,
+                width: '100%',
                 height: '100%',
                 position: 'absolute',
                 display: 'flex',
@@ -163,32 +164,34 @@ const GameBoard = ({
 
     return (
         <div
-            style={{ position: 'relative' }}
-            className="dot-grid"
+            style={{ position: 'relative', border: '1px solid #ddd' }}
+            className="dot-grid w-100 bg-light py-5"
             onMouseMove={handleMouseMove}
-            onMouseUp={handleDotMouseUp}>
+            onMouseUp={handleDotMouseUp}
+            onTouchMove={handleMouseMove}
+            onTouchEnd={handleDotMouseUp}>
             {loading
                 ? overlay(<Spinner animation="border" />)
                 : winner
-                  ? overlay(`${winner === player1 ? 'You' : winner} won!`)
-                  : !player2
-                    ? overlay('Waiting for opponent to join...')
-                    : !started && !isFirstCame
-                      ? overlay('Waiting for opponent to start...')
-                      : !started &&
-                        isFirstCame &&
-                        overlay(
-                            <Button
-                                style={{
-                                    width: 150,
-                                    height: 80,
-                                    fontSize: 50,
-                                    fontWeight: 'bold',
-                                }}
-                                onClick={() => startGame([player1, player2])}>
-                                Start{' '}
-                            </Button>
-                        )}
+                ? overlay(`${winner === player1 ? 'You' : winner} won!`)
+                : !player2
+                ? overlay('Waiting for opponent to join...')
+                : !started && !isFirstCame
+                ? overlay('Waiting for opponent to start...')
+                : !started &&
+                  isFirstCame &&
+                  overlay(
+                      <Button
+                          style={{
+                              width: 150,
+                              height: 80,
+                              fontSize: 50,
+                              fontWeight: 'bold',
+                          }}
+                          onClick={() => startGame([player1, player2])}>
+                          Start{' '}
+                      </Button>
+                  )}
             <svg width={cols * 50} height={rows * 50}>
                 {renderLines()}
                 {renderTempLine()}
@@ -203,6 +206,11 @@ const GameBoard = ({
                             fill="black"
                             onMouseDown={() => handleDotMouseDown(rowIndex, colIndex)}
                             onMouseUp={handleDotMouseUp}
+                            onTouchStart={(e) => {
+                                e.preventDefault();
+                                handleDotMouseDown(rowIndex, colIndex);
+                            }}
+                            onTouchEnd={handleDotMouseUp}
                         />
                     ))
                 )}

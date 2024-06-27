@@ -24,8 +24,9 @@ const useGame = (roomId, logRef) => {
         if (!roomId) {
             return;
         }
-        const handleGameStarted = () => {
+        const handleGameStarted = (turn) => {
             dispatch({ type: gameActions.SET_STARTED, payload: true });
+            dispatch({ type: gameActions.SET_TURN, payload: turn });
         };
         const handleMove = (data) => {
             const { line, tiles, turn } = data;
@@ -105,10 +106,7 @@ const useGame = (roomId, logRef) => {
     };
 
     useEffect(() => {
-        console.log('GameProvider mounted', state);
-        return () => {
-            console.log('GameProvider unmounted');
-        };
+        console.log('GameProvider mounted');
     }, [roomId, state]);
 
     return {

@@ -3,7 +3,7 @@ import { Spinner } from 'react-bootstrap';
 import io from 'socket.io-client';
 import useUser from '../hooks/useUser';
 
-const url = process.env.REACT_APP_SOCKET_URL;
+const url = process.env.REACT_APP_LOCAL_SOCKET_URL;
 
 const SocketContext = createContext();
 
@@ -70,9 +70,6 @@ const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         console.log('SocketProvider mounted');
-        return () => {
-            console.log('SocketProvider unmounted');
-        };
     }, []);
 
     if (isConnected) {
