@@ -1,27 +1,28 @@
-import { useContext } from 'react';
-import { UserContext } from '../contexts/UserContext';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { randomizeUsername, setUser } from '../reducers/userReducer';
 
 const useUser = () => {
-    const { user, username, error, setUser, setUsername, setError, randomizeUsername } =
-        useContext(UserContext);
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.user);
+    const error = useSelector((state) => state.user.error);
 
-    const handleChange = (e) => {
-        e.preventDefault();
-        setUsername(e.target.value);
-        if (!e.target.value || e.target.value.length < 5) {
-            setError('Username must be at least 5 characters long');
-            return;
+    useEffect(() => {
+        const localUser = localStorage.getItem('user');
+        if (localUser) {
+            const parsedUser = JSON.parse(localUser);
+            dispatch(setUser(parsedUser));
+        } else {
+            dispatch(randomizeUsername());
         }
-        const updatedUser = { username: e.target.value };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        setError(null);
-    };
+    }, [dispatch]);
+
+    useEffect(() => {
+        console.log('UserProvider mounted');
+    }, []);
     return {
         user,
-        username,
         error,
-        handleChange,
         randomizeUsername,
     };
 };

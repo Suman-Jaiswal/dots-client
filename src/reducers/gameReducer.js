@@ -16,7 +16,7 @@ export const gameActions = {
     SET_PLAYER_SCORES: 'SET_PLAYER_SCORES',
 };
 
-export const gameReducer = (state, action) => {
+export const gameReducer = (state = initialState, action) => {
     switch (action.type) {
         case gameActions.SET_TURN:
             return { ...state, turn: action.payload };

@@ -1,4 +1,4 @@
-1. Install redux, react-redux, redux-thunk, redux-logger
+1. Install redux, react-redux, redux-thunk, redux-logger {cm:2024-06-27}
 2. Create a store
 3. Create reducers {c}
     1. Create userReducer and Actions

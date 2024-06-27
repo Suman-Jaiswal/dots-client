@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Navbar } from 'react-bootstrap';
-import useUser from '../hooks/useUser';
+import { useDispatch, useSelector } from 'react-redux';
+import { randomizeUsername, setError, setUser } from '../reducers/userReducer';
 
 export default function Header({ disabled = false }) {
-    const { username, randomizeUsername, handleChange } = useUser();
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.user);
+    const [username, setUsername] = useState(user.username);
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        setUsername(e.target.value);
+        if (!e.target.value || e.target.value.length < 5) {
+            dispatch(setError('Username must be at least 5 characters long'));
+            return;
+        }
+        const updatedUser = { username: e.target.value };
+        dispatch(setUser(updatedUser));
+        dispatch(setError(null));
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+    };
+
+    useEffect(() => {
+        setUsername(user.username);
+    }, [user.username]);
+
     return (
         <Navbar
             variant="light"
@@ -22,7 +43,7 @@ export default function Header({ disabled = false }) {
                         disabled={disabled}
                     />
                     {!disabled && (
-                        <Button variant="success" onClick={randomizeUsername}>
+                        <Button variant="success" onClick={() => dispatch(randomizeUsername())}>
                             Random
                         </Button>
                     )}

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, FormControl, InputGroup } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import useRoom from '../hooks/useRoom';
-import useUser from '../hooks/useUser';
 import Header from './Header';
 import Room from './Room';
 
 const Lobby = () => {
-    const { error } = useUser();
+    const error = useSelector((state) => state.user.error);
     const {
         roomId,
         roomJoined,

@@ -16,7 +16,7 @@ export const roomActions = {
     SET_PLAYERS: 'SET_PLAYERS',
 };
 
-export const roomReducer = (state, action) => {
+export const roomReducer = (state = initialState, action) => {
     switch (action.type) {
         case roomActions.CREATE_ROOM:
             return {

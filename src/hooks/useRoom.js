@@ -1,12 +1,12 @@
 import { useEffect, useReducer, useState } from 'react';
+import { useSelector } from 'react-redux';
 import useSocket from '../hooks/useSocket';
-import useUser from '../hooks/useUser';
 import { initialState, roomActions, roomReducer } from '../reducers/roomReducer';
 
 const useRoom = () => {
     const [state, dispatch] = useReducer(roomReducer, initialState);
     const { on, off, emit, socket } = useSocket();
-    const { user } = useUser();
+    const user = useSelector((state) => state.user.user);
     const [message, setMessage] = useState(''); // New state for message
 
     useEffect(() => {
