@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { Line, Tile } from '../components/pojo';
 import useSocket from '../hooks/useSocket';
 import { gameActions, gameReducer, initialState } from '../reducers/gameReducer';
@@ -6,6 +6,7 @@ import { gameActions, gameReducer, initialState } from '../reducers/gameReducer'
 const useGame = (roomId, logRef) => {
     const [state, dispatch] = useReducer(gameReducer, initialState);
     const { on, off, emit } = useSocket();
+    const [loading, setLoading] = useState(true);
 
     const addMessageElement = useCallback(
         (message) => {
@@ -65,6 +66,7 @@ const useGame = (roomId, logRef) => {
     }, [addMessageElement, off, on, roomId]);
 
     useEffect(() => {
+        setLoading(true);
         if (!roomId) {
             return;
         }
@@ -83,6 +85,7 @@ const useGame = (roomId, logRef) => {
                 dispatch({ type: gameActions.SET_TURN, payload: data.turn });
                 dispatch({ type: gameActions.SET_STARTED, payload: data.started });
                 dispatch({ type: gameActions.SET_PLAYER_SCORES, payload: data.playerScores });
+                setLoading(false);
             });
         };
         fetchGameData();
@@ -111,6 +114,7 @@ const useGame = (roomId, logRef) => {
     return {
         ...state,
         logRef,
+        loading,
         addMessageElement,
         startGame,
         makeMove,

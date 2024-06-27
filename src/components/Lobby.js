@@ -17,6 +17,7 @@ const Lobby = () => {
         createRoom,
         joinRoom,
         leaveRoom,
+        message,
     } = useRoom();
 
     const [roomIdInput, setRoomIdInputInput] = useState('');
@@ -34,7 +35,9 @@ const Lobby = () => {
     return (
         <div>
             <Header disabled={roomJoined} />
-            {error ? (
+            {message ? (
+                <div className="mt-5 text-center text-success">{message}</div>
+            ) : error ? (
                 <div className="mt-5 text-center text-danger">{error}</div>
             ) : roomJoined ? (
                 <Room
@@ -45,27 +48,29 @@ const Lobby = () => {
                     isFirstCame={isFirstCame}
                 />
             ) : (
-                <div className="d-flex mt-5 w-50 m-auto">
-                    <Button
-                        className="w-50 me-3"
-                        size="lg"
-                        variant="success"
-                        onClick={handleCreateRoom}>
-                        Create Room
-                    </Button>
-                    <InputGroup>
-                        <FormControl
-                            type="text"
-                            placeholder="Enter Room ID"
-                            value={roomIdInput}
-                            onChange={(e) => setRoomIdInputInput(e.target.value)}
-                        />
+                <div className="d-flex mt-4 px-2 row m-auto">
+                    <div className="col-12 col-md-5 py-3">
                         <Button
+                            className="w-100"
                             size="lg"
-                            onClick={handleJoinRoom}>
-                            Join Room
+                            variant="success"
+                            onClick={handleCreateRoom}>
+                            Create Room
                         </Button>
-                    </InputGroup>
+                    </div>
+                    <div className="col-12 col-md-7 py-3">
+                        <InputGroup className="w-100">
+                            <FormControl
+                                type="text"
+                                placeholder="Enter Room ID"
+                                value={roomIdInput}
+                                onChange={(e) => setRoomIdInputInput(e.target.value)}
+                            />
+                            <Button size="lg" onClick={handleJoinRoom}>
+                                Join Room
+                            </Button>
+                        </InputGroup>
+                    </div>
                 </div>
             )}
             {roomError && <div className="mt-5 text-center text-danger">{roomError}</div>}

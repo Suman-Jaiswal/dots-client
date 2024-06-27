@@ -20,11 +20,7 @@ const Test = () => {
     return (
         <div>
             {roomCreated && <p>Room Created with ID: {roomId}</p>}
-            <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-            />
+            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} />
             {roomJoined && <p>Joined Room with ID: {roomId}</p>}
             {roomLeft && <p>Left the Room</p>}
             {roomError && <p>Error: {roomError}</p>}

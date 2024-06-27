@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import useSocket from '../hooks/useSocket';
 import useUser from '../hooks/useUser';
 import { initialState, roomActions, roomReducer } from '../reducers/roomReducer';
@@ -7,12 +7,13 @@ const useRoom = () => {
     const [state, dispatch] = useReducer(roomReducer, initialState);
     const { on, off, emit, socket } = useSocket();
     const { user } = useUser();
+    const [message, setMessage] = useState(''); // New state for message
 
     useEffect(() => {
         const storedRoomId = localStorage.getItem('roomId');
         if (storedRoomId && socket) {
+            setMessage('Rejoining room...');
             emit('joinRoom', storedRoomId);
-            console.log('Joining room', storedRoomId);
         }
     }, [emit, socket]);
 
@@ -27,6 +28,7 @@ const useRoom = () => {
         const handleRoomJoined = (id) => {
             dispatch({ type: roomActions.JOIN_ROOM, payload: id });
             localStorage.setItem('roomId', id);
+            setMessage(null);
         };
 
         const handleRoomLeft = () => {
@@ -46,9 +48,9 @@ const useRoom = () => {
         };
 
         const handleRoomError = (message) => {
-            console.log(message);
             dispatch({ type: roomActions.ROOM_ERROR, payload: message });
             localStorage.removeItem('roomId');
+            setMessage(null);
         };
 
         on('roomCreated', handleRoomCreated);
@@ -89,6 +91,7 @@ const useRoom = () => {
 
     return {
         ...state,
+        message,
         createRoom,
         joinRoom,
         leaveRoom,

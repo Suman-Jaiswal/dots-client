@@ -5,7 +5,7 @@ import { SocketProvider } from './contexts/SocketContext';
 const App = () => {
     return (
         <div
-            className="container-lg"
+            className="container-lg px-0"
             style={{
                 borderLeft: '1px solid #ddd',
                 borderRight: '1px solid #ddd',

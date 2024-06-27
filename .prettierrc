@@ -8,8 +8,9 @@
     "trailingComma": "es5",
     "bracketSpacing": true,
     "arrowParens": "always",
-    "proseWrap": "preserve",
+    "proseWrap": "always",
     "bracketSameLine": true,
-    "singleAttributePerLine": true,
-    "htmlWhitespaceSensitivity": "css"
+    "singleAttributePerLine": false,
+    "htmlWhitespaceSensitivity": "css",
+    "experimentalTernaries": false
 }

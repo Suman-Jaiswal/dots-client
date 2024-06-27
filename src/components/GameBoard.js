@@ -1,22 +1,24 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Spinner } from 'react-bootstrap';
 import useGame from '../hooks/useGame';
 import { Line, Point } from './pojo';
 
-const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }) => {
-    const { lines, tiles, started, startGame, makeMove, turn, playerScores, winner } = useGame(
-        roomId,
-        [player1, player2],
-        logRef
-    );
+const GameBoard = ({
+    rows,
+    cols,
+    isFirstCame,
+    logRef,
+    roomId,
+    player1,
+    player2,
+    setPlayerScores,
+}) => {
+    const { lines, tiles, started, startGame, makeMove, turn, playerScores, winner, loading } =
+        useGame(roomId, [player1, player2], logRef);
 
-    const player1Score = useMemo(() => {
-        return playerScores.filter((score) => score.username === player1)[0]?.score || 0;
-    }, [player1, playerScores]);
-
-    const player2Score = useMemo(() => {
-        return playerScores.filter((score) => score.username === player2)[0]?.score || 0;
-    }, [player2, playerScores]);
+    useEffect(() => {
+        setPlayerScores(playerScores.map((score) => ({ ...score, turn: score.username === turn })));
+    }, [playerScores, setPlayerScores, turn]);
 
     const [tempLine, setTempLine] = useState(null);
     const startDot = useRef(null);
@@ -136,167 +138,77 @@ const GameBoard = ({ rows, cols, isFirstCame, logRef, roomId, player1, player2 }
         });
     };
 
-    if (!started || winner || winner !== '') {
-        return (
+    const overlay = (element) => (
+        <div
+            style={{
+                width: cols * 50,
+                height: '100%',
+                position: 'absolute',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: 'linear-gradient(45deg, rgba(1, 1, 1, 0.2), rgba(1, 1, 1, 0.5)',
+            }}>
             <div
+                className="text-center"
                 style={{
-                    position: 'relative',
-                }}
-                className="dot-grid">
-                <div
-                    style={{
-                        width: cols * 50,
-                        height: '100%',
-                        position: 'absolute',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        background: 'linear-gradient(45deg, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0.8)',
-                    }}>
-                    {winner || winner !== '' ? (
-                        <div
-                            className="text-center"
-                            style={{
-                                width: 200,
-                                height: 100,
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                color: 'white',
-                            }}>
-                            <div>
-                                {' '}
-                                {winner === 'draw'
-                                    ? 'Game Draw'
-                                    : `${winner === player1 ? 'You' : player2} won`}{' '}
-                            </div>
-                        </div>
-                    ) : !player2 ? (
-                        <div
-                            className="text-center"
-                            style={{
-                                width: 200,
-                                height: 100,
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                color: 'white',
-                            }}>
-                            Waiting for Opponent to join...
-                        </div>
-                    ) : isFirstCame ? (
-                        <Button
-                            style={{
-                                width: 200,
-                                height: 100,
-                                fontSize: 50,
-                                fontWeight: 'bold',
-                            }}
-                            onClick={() => startGame([player1, player2])}>
-                            Start
-                        </Button>
-                    ) : (
-                        <div
-                            className="text-center"
-                            style={{
-                                width: 200,
-                                height: 100,
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                color: 'white',
-                            }}>
-                            Opponent will start the game
-                        </div>
-                    )}
-                </div>
-                <svg
-                    width={cols * 50}
-                    height={rows * 50}>
-                    {Array.from({ length: rows }).map((_, rowIndex) =>
-                        Array.from({ length: cols }).map((_, colIndex) => (
-                            <circle
-                                key={`dot-${rowIndex}-${colIndex}`}
-                                cx={colIndex * 50 + 25}
-                                cy={rowIndex * 50 + 25}
-                                r="6"
-                                fill="gray"
-                            />
-                        ))
-                    )}
-                </svg>
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: 'white',
+                }}>
+                <div>{element}</div>
             </div>
-        );
-    }
+        </div>
+    );
 
     return (
-        <>
-            <div
-                className="dot-grid"
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleDotMouseUp}>
-                <svg
-                    width={cols * 50}
-                    height={rows * 50}>
-                    {renderLines()}
-                    {renderTempLine()}
-                    {Array.from({ length: rows }).map((_, rowIndex) =>
-                        Array.from({ length: cols }).map((_, colIndex) => (
-                            <circle
-                                style={{ cursor: turn === player1 ? 'pointer' : '' }}
-                                key={`dot-${rowIndex}-${colIndex}`}
-                                cx={colIndex * 50 + 25}
-                                cy={rowIndex * 50 + 25}
-                                r="6"
-                                fill="black"
-                                onMouseDown={() => handleDotMouseDown(rowIndex, colIndex)}
-                                onMouseUp={handleDotMouseUp}
-                            />
-                        ))
-                    )}
-                    {renderTiles()}
-                </svg>
-            </div>
-            <div
-                className="bg-light row p-3 ms-0 mt-4 w-100"
-                style={{ border: '1px solid #ddd' }}>
-                <div
-                    className="col d-flex flex-column align-items-center rounded-pill"
-                    style={{ border: turn === player1 ? '3px solid blue' : 'none' }}>
-                    <div style={{ color: 'blue' }}>
-                        <b>{player1}</b>
-                    </div>
-                    <div>Score: {player1Score}</div>
-                    {/* <div><b>Time left: </b>52s</div> */}
-                </div>
-
-                <div
-                    className="col fs-1"
-                    style={{ opacity: turn === player1 ? 1 : 0 }}>
-                    ⬅
-                </div>
-                <div className="col d-flex justify-content-center align-items-center">
-                    <b>V/S</b>
-                </div>
-                <div
-                    className="col fs-1"
-                    style={{ opacity: turn === player2 ? 1 : 0 }}>
-                    ➡
-                </div>
-
-                <div
-                    className="col d-flex flex-column align-items-center rounded-pill"
-                    style={{ border: turn === player2 ? '3px solid red' : 'none' }}>
-                    {!player2 ? (
-                        <div className="">Waiting for Opponent...</div>
-                    ) : (
-                        <>
-                            <div style={{ color: 'red' }}>
-                                <b>{player2}</b>
-                            </div>
-                            <div>Score: {player2Score}</div>
-                        </>
-                    )}
-                </div>
-            </div>
-        </>
+        <div
+            style={{ position: 'relative' }}
+            className="dot-grid"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleDotMouseUp}>
+            {loading
+                ? overlay(<Spinner animation="border" />)
+                : winner
+                  ? overlay(`${winner === player1 ? 'You' : winner} won!`)
+                  : !player2
+                    ? overlay('Waiting for opponent to join...')
+                    : !started && !isFirstCame
+                      ? overlay('Waiting for opponent to start...')
+                      : !started &&
+                        isFirstCame &&
+                        overlay(
+                            <Button
+                                style={{
+                                    width: 150,
+                                    height: 80,
+                                    fontSize: 50,
+                                    fontWeight: 'bold',
+                                }}
+                                onClick={() => startGame([player1, player2])}>
+                                Start{' '}
+                            </Button>
+                        )}
+            <svg width={cols * 50} height={rows * 50}>
+                {renderLines()}
+                {renderTempLine()}
+                {Array.from({ length: rows }).map((_, rowIndex) =>
+                    Array.from({ length: cols }).map((_, colIndex) => (
+                        <circle
+                            style={{ cursor: turn === player1 ? 'pointer' : '' }}
+                            key={`dot-${rowIndex}-${colIndex}`}
+                            cx={colIndex * 50 + 25}
+                            cy={rowIndex * 50 + 25}
+                            r="6"
+                            fill="black"
+                            onMouseDown={() => handleDotMouseDown(rowIndex, colIndex)}
+                            onMouseUp={handleDotMouseUp}
+                        />
+                    ))
+                )}
+                {renderTiles()}
+            </svg>
+        </div>
     );
 };
 

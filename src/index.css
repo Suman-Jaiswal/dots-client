@@ -17,14 +17,10 @@ code {
 }
 
 .dot-grid svg {
-    background: linear-gradient(45deg, rgba(255, 0, 0, 0.308), rgba(0, 0, 255, 0.397));
+    background: linear-gradient(45deg, rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.5));
     border: 2px solid #ccc;
 }
 
 .dot-grid circle {
     transition: fill 0.2s;
-}
-
-.dot-grid circle:hover {
-    /* fill: red; */
 }
