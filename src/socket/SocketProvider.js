@@ -3,7 +3,7 @@ import { Spinner } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import io from 'socket.io-client';
 
-const url = process.env.REACT_APP_LOCAL_SOCKET_URL;
+const url = process.env.REACT_APP_SOCKET_URL;
 
 const SocketContext = createContext();
 
