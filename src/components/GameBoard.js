@@ -1,15 +1,25 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import useGame from '../hooks/useGame';
-import { Line, Point } from './pojo';
+import { useDispatch, useSelector } from 'react-redux';
+import useSocket from '../hooks/useSocket';
+import { gameEmitters } from '../socket/socketEmitters';
+import { Line, Point, Tile } from './pojo';
 
-const GameBoard = ({ cols, rows, logRef }) => {
+const GameBoard = ({ cols, rows }) => {
+    const dispatch = useDispatch();
+    const { emit } = useSocket();
     const { roomId, player1, player2, isFirstCame } = useSelector((state) => state.room);
-    const { lines, tiles, started, startGame, makeMove, turn, winner, loading } = useGame(
-        roomId,
-        logRef
+    const { makeMove, startGame } = useMemo(
+        () => gameEmitters(emit, dispatch, roomId),
+        [dispatch, emit, roomId]
     );
+
+    const lines = useSelector((state) => state.game.lines).map((line) => Line.fromObject(line));
+    const tiles = useSelector((state) => state.game.tiles).map((tile) => Tile.fromObject(tile));
+    const started = useSelector((state) => state.game.started);
+    const turn = useSelector((state) => state.game.turn);
+    const winner = useSelector((state) => state.game.winner);
+    const fetching = useSelector((state) => state.game.fetching);
 
     const [tempLine, setTempLine] = useState(null);
     const startDot = useRef(null);
@@ -139,14 +149,26 @@ const GameBoard = ({ cols, rows, logRef }) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                background: 'linear-gradient(0deg, rgba(20, 20, 20, 0.8), rgba(25, 25, 25, 0.5)',
+                background: 'linear-gradient(0deg, rgba(10, 10, 10, 0.9), rgba(15, 15, 15, 0.7)',
             }}>
             <div
                 className="text-center"
                 style={{
-                    fontSize: 20,
+                    fontSize: 25,
                     fontWeight: 'bold',
                 }}>
+                {winner && (
+                    <img
+                        width={150}
+                        height={150}
+                        src={winner === player1 ? 'trophy.png' : 'lost.png'}
+                        alt=""
+                        style={{
+                            borderRadius: 150,
+                            marginBottom: 15,
+                        }}
+                    />
+                )}
                 <div>{element}</div>
             </div>
         </div>
@@ -160,10 +182,10 @@ const GameBoard = ({ cols, rows, logRef }) => {
             onMouseUp={handleDotMouseUp}
             onTouchMove={handleMouseMove}
             onTouchEnd={handleDotMouseUp}>
-            {loading
+            {fetching
                 ? overlay(<Spinner animation="border" />)
                 : winner
-                ? overlay(`${winner === player1 ? 'You' : winner} won!`)
+                ? overlay(`${winner === player1 ? 'You won' : 'You lost'}!`)
                 : !player2
                 ? overlay('Waiting for opponent to join...')
                 : !started && !isFirstCame
@@ -173,10 +195,13 @@ const GameBoard = ({ cols, rows, logRef }) => {
                   overlay(
                       <Button
                           style={{
-                              width: 150,
+                              width: 180,
                               height: 80,
                               fontSize: 50,
                               fontWeight: 'bold',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                           }}
                           onClick={() => startGame([player1, player2])}>
                           Start{' '}

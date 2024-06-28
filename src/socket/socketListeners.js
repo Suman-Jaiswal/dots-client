@@ -1,7 +1,16 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Line, Tile } from '../components/pojo';
-import { gameActions } from '../reducers/gameReducer';
+import {
+    addLines,
+    addTiles,
+    setFetching,
+    setLines,
+    setPlayerScores,
+    setStarted,
+    setTiles,
+    setTurn,
+    setWinner,
+} from '../reducers/gameReducer';
 import {
     addLog,
     joinRoomSuccess,
@@ -16,8 +25,8 @@ export const useRoomListeners = (on, off, dispatch) => {
 
     useEffect(() => {
         const handleRoomJoined = (id) => {
-            dispatch(setLoading(false));
             dispatch(joinRoomSuccess(id));
+            dispatch(setLoading(false));
         };
 
         const handleRoomLeft = () => {
@@ -35,8 +44,8 @@ export const useRoomListeners = (on, off, dispatch) => {
         };
 
         const handleRoomError = (message) => {
-            dispatch(setLoading(false));
             dispatch(roomError(message));
+            dispatch(setLoading(false));
         };
 
         const handleMessage = (message) => {
@@ -50,59 +59,65 @@ export const useRoomListeners = (on, off, dispatch) => {
         on('message', handleMessage);
 
         return () => {
-            off('roomJoined', handleRoomJoined);
-            off('roomLeft', handleRoomLeft);
-            off('playerList', handlePlayerList);
-            off('roomError', handleRoomError);
+            off('roomJoined');
+            off('roomLeft');
+            off('playerList');
+            off('roomError');
+            off('message');
         };
     }, [dispatch, off, on, user?.username]);
 };
 
 export const useGameListeners = (on, off, dispatch) => {
-    const roomId = useSelector((state) => state.room.roomId);
+    const roomJoined = useSelector((state) => state.room.roomJoined);
     useEffect(() => {
-        if (!roomId) {
+        if (!roomJoined) {
             return;
         }
+
+        const handleGameData = (data) => {
+            dispatch(setLines(data.lines));
+            dispatch(setTiles(data.tiles));
+            dispatch(setTurn(data.turn));
+            dispatch(setWinner(data.winner));
+            dispatch(setStarted(data.started));
+            dispatch(setPlayerScores(data.playerScores));
+            dispatch(setFetching(false));
+        };
+
         const handleGameStarted = (turn) => {
-            dispatch({ type: gameActions.SET_STARTED, payload: true });
-            dispatch({ type: gameActions.SET_TURN, payload: turn });
+            dispatch(setStarted(true));
+            dispatch(setTurn(turn));
         };
         const handleMove = (data) => {
-            const { line, tiles, turn } = data;
-            const newLine = Line.fromString(line);
-            if (tiles) {
-                dispatch({
-                    type: gameActions.ADD_TILES,
-                    payload: tiles.map((tile) => Tile.fromObject(tile)),
-                });
+            const { newLine, newTiles, turn } = data;
+            if (newTiles && newTiles.length > 0) {
+                dispatch(addTiles(newTiles));
             }
-            dispatch({ type: gameActions.ADD_LINES, payload: [newLine] });
-            dispatch({ type: gameActions.SET_TURN, payload: turn });
-            // addMessageElement(`Player ${turn} made a move`);
+            dispatch(addLines([newLine]));
+            dispatch(setTurn(turn));
         };
-        const handleTilesCreated = (tiles) => {
-            dispatch({ type: gameActions.ADD_TILES, payload: tiles });
-        };
-        const handleGameOver = (data) => {
-            dispatch({ type: gameActions.SET_WINNER, payload: data.winner });
+        const handleGameOver = (winner) => {
+            dispatch(setWinner(winner));
+            dispatch(addLog('Game over! Winner: ' + winner));
         };
 
         const handleScore = (playerScores) => {
-            dispatch({ type: gameActions.SET_PLAYER_SCORES, payload: playerScores });
+            dispatch(setPlayerScores(playerScores));
         };
 
+        on('gameData', handleGameData);
         on('gameStarted', handleGameStarted);
         on('move', handleMove);
-        on('tilesCreated', handleTilesCreated);
         on('score', handleScore);
         on('gameOver', handleGameOver);
+
         return () => {
+            off('gameData');
             off('gameStarted');
             off('move');
-            off('tilesCreated');
-            off('gameOver');
             off('score');
+            off('gameOver');
         };
-    }, [dispatch, off, on, roomId]);
+    }, [dispatch, off, on, roomJoined]);
 };

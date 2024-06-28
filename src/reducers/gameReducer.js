@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 export const initialState = {
     turn: null,
     started: false,
@@ -5,32 +7,53 @@ export const initialState = {
     tiles: [],
     playerScores: [],
     winner: null,
+    fetching: true,
 };
 
-export const gameActions = {
-    SET_TURN: 'SET_TURN',
-    SET_STARTED: 'SET_STARTED',
-    ADD_LINES: 'ADD_LINES',
-    ADD_TILES: 'ADD_TILES',
-    SET_WINNER: 'SET_WINNER',
-    SET_PLAYER_SCORES: 'SET_PLAYER_SCORES',
-};
+const gameSlice = createSlice({
+    name: 'game',
+    initialState,
+    reducers: {
+        setTurn(state, { payload }) {
+            state.turn = payload;
+        },
+        setStarted(state, { payload }) {
+            state.started = payload;
+        },
+        setLines(state, { payload }) {
+            state.lines = payload;
+        },
+        setTiles(state, { payload }) {
+            state.tiles = payload;
+        },
+        addLines(state, { payload }) {
+            state.lines = [...state.lines, ...payload];
+        },
+        addTiles(state, { payload }) {
+            state.tiles = [...state.tiles, ...payload];
+        },
+        setWinner(state, { payload }) {
+            state.winner = payload;
+        },
+        setPlayerScores(state, { payload }) {
+            state.playerScores = payload;
+        },
+        setFetching(state, { payload }) {
+            state.fetching = payload;
+        },
+    },
+});
 
-export const gameReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case gameActions.SET_TURN:
-            return { ...state, turn: action.payload };
-        case gameActions.SET_STARTED:
-            return { ...state, started: action.payload };
-        case gameActions.ADD_LINES:
-            return { ...state, lines: [...state.lines, ...action.payload] };
-        case gameActions.ADD_TILES:
-            return { ...state, tiles: [...state.tiles, ...action.payload] };
-        case gameActions.SET_WINNER:
-            return { ...state, winner: action.payload };
-        case gameActions.SET_PLAYER_SCORES:
-            return { ...state, playerScores: action.payload };
-        default:
-            return state;
-    }
-};
+export const {
+    setTurn,
+    setStarted,
+    setLines,
+    setTiles,
+    addLines,
+    addTiles,
+    setWinner,
+    setPlayerScores,
+    setFetching,
+} = gameSlice.actions;
+
+export default gameSlice.reducer;

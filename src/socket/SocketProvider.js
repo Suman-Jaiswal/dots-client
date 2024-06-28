@@ -15,6 +15,7 @@ const SocketProvider = ({ children }) => {
     const user = useSelector((state) => state.user.user);
 
     useEffect(() => {
+        console.log('SocketProvider mounted');
         setLoading(true);
         if (!user) {
             return;
@@ -46,31 +47,22 @@ const SocketProvider = ({ children }) => {
             setLoading(false);
         });
 
+        newSocket.on('authError', (error) => {
+            console.log(error);
+        });
+
         setSocket(newSocket);
 
         // Cleanup on unmount
         return () => {
+            console.log('SocketProvider mounted');
             newSocket.off('connect');
             newSocket.off('disconnect');
             newSocket.off('connect_error');
+            newSocket.off('authError');
             newSocket.close();
         };
     }, [user]);
-
-    useEffect(() => {
-        if (socket) {
-            socket.on('authError', (error) => {
-                console.log(error);
-            });
-            return () => {
-                socket.off('authError');
-            };
-        }
-    }, [socket]);
-
-    useEffect(() => {
-        console.log('SocketProvider mounted');
-    }, []);
 
     if (isConnected) {
         return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;

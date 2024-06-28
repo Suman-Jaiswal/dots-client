@@ -1,37 +1,37 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, FormControl, InputGroup } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import useSocket from '../hooks/useSocket';
 import { roomEmitters } from '../socket/socketEmitters';
-import { useRoomListeners } from '../socket/socketListeners';
+import { useGameListeners, useRoomListeners } from '../socket/socketListeners';
 import Room from './Room';
 
 const Lobby = () => {
     const dispatch = useDispatch();
     const { emit, on, off } = useSocket();
     useRoomListeners(on, off, dispatch);
+    useGameListeners(on, off, dispatch);
 
-    const roomEmitter = useMemo(() => roomEmitters(emit, dispatch), [emit, dispatch]);
     const error = useSelector((state) => state.user.error);
     const { roomJoined, roomError, loading, roomId } = useSelector((state) => state.room);
 
     const [roomIdInput, setRoomIdInputInput] = useState('');
 
     const handleCreateRoom = () => {
-        roomEmitter.createRoom();
+        roomEmitters.createRoom();
     };
 
     const handleJoinRoom = () => {
         if (roomIdInput) {
-            roomEmitter.joinRoom(roomIdInput);
+            roomEmitters(emit, dispatch).joinRoom(roomIdInput);
         }
     };
 
     useEffect(() => {
         if (roomId) {
-            roomEmitter.joinRoom(roomId);
+            roomEmitters(emit, dispatch).joinRoom(roomId);
         }
-    }, [roomId, roomEmitter]);
+    }, [roomId, dispatch, emit]);
 
     return (
         <div>

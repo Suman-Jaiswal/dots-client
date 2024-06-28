@@ -3,12 +3,38 @@ import monitorReducerEnhancer from './enhancers/monitorReducer';
 import loggerMiddleware from './middlewares/logger';
 import rootReducer from './reducers';
 
-export default function configureAppStore(preloadedState) {
+const preloadedState = {
+    user: {
+        user: JSON.parse(localStorage.getItem('user')) || null,
+    },
+    room: {
+        roomId: JSON.parse(localStorage.getItem('roomId')) || null,
+        logs: JSON.parse(localStorage.getItem('logs')) || [],
+    },
+};
+
+export default function configureAppStore() {
     const store = configureStore({
         reducer: rootReducer,
         middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(loggerMiddleware),
         preloadedState,
-        enhancers: (getDefaultEnhancers) => [monitorReducerEnhancer, ...getDefaultEnhancers()],
+        enhancers: (getDefaultEnhancers) =>
+            process.env.NODE_ENV !== 'production'
+                ? [monitorReducerEnhancer, ...getDefaultEnhancers()]
+                : getDefaultEnhancers(),
+        devTools: process.env.NODE_ENV !== 'production' && {
+            name: 'Connect Dots Game',
+            trace: true,
+            traceLimit: 25,
+            actionCreators: {
+                room: {
+                    clearLog: () => ({
+                        type: 'room/clearLogs',
+                        payload: null,
+                    }),
+                },
+            },
+        },
     });
 
     if (process.env.NODE_ENV !== 'production' && module.hot) {

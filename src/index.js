@@ -8,17 +8,7 @@ import configureAppStore from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const persistedState = {
-    user: {
-        user: JSON.parse(localStorage.getItem('user')) || null,
-    },
-    room: {
-        roomId: JSON.parse(localStorage.getItem('roomId')) || null,
-        logs: JSON.parse(localStorage.getItem('logs')) || [],
-    },
-};
-
-const store = configureAppStore(persistedState);
+const store = configureAppStore();
 
 root.render(
     <Provider store={store}>
