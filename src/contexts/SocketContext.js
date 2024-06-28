@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import io from 'socket.io-client';
-import useUser from '../hooks/useUser';
 
 const url = process.env.REACT_APP_SOCKET_URL;
 
@@ -12,7 +12,7 @@ const SocketProvider = ({ children }) => {
     const [socketError, setSocketError] = useState(null);
     const [isConnected, setIsConnected] = useState(false); // New state for connection status
     const [loading, setLoading] = useState(false);
-    const { user } = useUser();
+    const user = useSelector((state) => state.user.user);
 
     useEffect(() => {
         setLoading(true);

@@ -5,7 +5,6 @@ import { randomizeUsername } from '../reducers/userReducer';
 const useUser = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user);
-    const error = useSelector((state) => state.user.error);
 
     useEffect(() => {
         if (!user) {
@@ -16,11 +15,7 @@ const useUser = () => {
     useEffect(() => {
         console.log('UserProvider mounted');
     }, []);
-    return {
-        user,
-        error,
-        randomizeUsername,
-    };
+    return;
 };
 
 export default useUser;
