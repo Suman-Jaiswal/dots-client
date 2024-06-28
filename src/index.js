@@ -16,8 +16,6 @@ const store = configureAppStore(persistedState);
 
 root.render(
     <Provider store={store}>
-        {/* <UserProvider> */}
         <App />
-        {/* </UserProvider> */}
     </Provider>
 );

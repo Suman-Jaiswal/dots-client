@@ -47,7 +47,6 @@ export const roomReducer = (state = initialState, action) => {
                 player2: action.payload.player2,
                 isFirstCame: action.payload.isFirstCame,
             };
-
         default:
             return state;
     }

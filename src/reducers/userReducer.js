@@ -10,19 +10,17 @@ const userSlice = createSlice({
     name: 'user',
     initialState: {
         user: null,
-        username: '',
         error: null,
     },
     reducers: {
-        setUser(state, action) {
-            state.user = action.payload;
-            state.username = action.payload.username;
-        },
-        setUsername(state, action) {
-            state.username = action.payload;
-        },
-        setError(state, action) {
-            state.error = action.payload;
+        updateUsername(state, action) {
+            const { username } = action.payload;
+            if (!username || username.length < 5) {
+                state.error = 'Username must be at least 5 characters long';
+                return;
+            }
+            state.user = { ...state.user, username };
+            state.error = null;
         },
         randomizeUsername(state, action) {
             const username = uniqueNamesGenerator({
@@ -32,13 +30,10 @@ const userSlice = createSlice({
                     NumberDictionary.generate({ min: 100, max: 999 }),
                 ],
             });
-            const user = { username };
-            localStorage.setItem('user', JSON.stringify(user));
-            state.username = username;
-            state.user = user;
+            state.user = { ...state.user, username };
         },
     },
 });
 
-export const { setUser, setUsername, setError, randomizeUsername } = userSlice.actions;
+export const { updateUsername, randomizeUsername } = userSlice.actions;
 export default userSlice.reducer;

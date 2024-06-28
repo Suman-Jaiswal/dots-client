@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Navbar } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { randomizeUsername, setError, setUser } from '../reducers/userReducer';
+import { randomizeUsername, updateUsername } from '../reducers/userReducer';
 
 export default function Header({ disabled = false }) {
     const dispatch = useDispatch();
@@ -11,14 +11,7 @@ export default function Header({ disabled = false }) {
     const handleChange = (e) => {
         e.preventDefault();
         setUsername(e.target.value);
-        if (!e.target.value || e.target.value.length < 5) {
-            dispatch(setError('Username must be at least 5 characters long'));
-            return;
-        }
-        const updatedUser = { username: e.target.value };
-        dispatch(setUser(updatedUser));
-        dispatch(setError(null));
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        dispatch(updateUsername({ username: e.target.value }));
     };
 
     useEffect(() => {

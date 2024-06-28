@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { randomizeUsername, setUser } from '../reducers/userReducer';
+import { randomizeUsername } from '../reducers/userReducer';
 
 const useUser = () => {
     const dispatch = useDispatch();
@@ -8,14 +8,10 @@ const useUser = () => {
     const error = useSelector((state) => state.user.error);
 
     useEffect(() => {
-        const localUser = localStorage.getItem('user');
-        if (localUser) {
-            const parsedUser = JSON.parse(localUser);
-            dispatch(setUser(parsedUser));
-        } else {
+        if (!user) {
             dispatch(randomizeUsername());
         }
-    }, [dispatch]);
+    }, [dispatch, user]);
 
     useEffect(() => {
         console.log('UserProvider mounted');
