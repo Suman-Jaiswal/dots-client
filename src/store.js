@@ -16,7 +16,10 @@ const preloadedState = {
 export default function configureAppStore() {
     const store = configureStore({
         reducer: rootReducer,
-        middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(loggerMiddleware),
+        middleware: (getDefaultMiddleware) =>
+            process.env.NODE_ENV !== 'production'
+                ? getDefaultMiddleware().prepend(loggerMiddleware)
+                : getDefaultMiddleware(),
         preloadedState,
         enhancers: (getDefaultEnhancers) =>
             process.env.NODE_ENV !== 'production'
