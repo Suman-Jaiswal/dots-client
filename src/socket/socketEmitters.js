@@ -14,6 +14,7 @@ export const roomEmitters = (emit, dispatch) => {
     };
 
     const leaveRoom = (id) => {
+        dispatch(setLoading(true));
         emit('leaveRoom', id);
     };
 

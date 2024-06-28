@@ -8,6 +8,7 @@ import { SocketProvider } from './socket/SocketProvider';
 const App = () => {
     useUser();
     useSocket();
+
     return (
         <div
             className="container-lg px-0"
