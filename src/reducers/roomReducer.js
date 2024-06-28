@@ -1,53 +1,49 @@
-export const initialState = {
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
     roomId: null,
     roomJoined: false,
-    roomCreated: false,
     roomError: null,
     player1: null,
     player2: null,
     isFirstCame: false,
+    loading: null,
+    logs: [],
 };
 
-export const roomActions = {
-    CREATE_ROOM: 'CREATE_ROOM',
-    JOIN_ROOM: 'JOIN_ROOM',
-    LEAVE_ROOM: 'LEAVE_ROOM',
-    ROOM_ERROR: 'ROOM_ERROR',
-    SET_PLAYERS: 'SET_PLAYERS',
-};
+const roomSlice = createSlice({
+    name: 'room',
+    initialState,
+    reducers: {
+        joinRoomSuccess(state, action) {
+            state.roomId = action.payload;
+            state.roomJoined = true;
+            state.roomError = null;
+        },
+        leaveRoomSuccess(state) {
+            return initialState; // Reset state to initial state
+        },
+        roomError(state, action) {
+            return { ...initialState, roomError: action.payload };
+        },
+        setPlayers(state, action) {
+            state.player1 = action.payload.player1;
+            state.player2 = action.payload.player2;
+            state.isFirstCame = action.payload.isFirstCame;
+        },
+        setLoading(state, action) {
+            state.loading = action.payload;
+        },
+        addLog(state, action) {
+            state.logs.push(action.payload);
+        },
+        clearLogs(state) {
+            state.logs = [];
+        },
+    },
+});
 
-export const roomReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case roomActions.CREATE_ROOM:
-            return {
-                ...state,
-                roomCreated: true,
-                roomError: null,
-            };
-        case roomActions.JOIN_ROOM:
-            return {
-                ...state,
-                roomId: action.payload,
-                roomJoined: true,
-                roomError: null,
-            };
-        case roomActions.LEAVE_ROOM:
-            return {
-                ...initialState,
-            };
-        case roomActions.ROOM_ERROR:
-            return {
-                ...state,
-                roomError: action.payload,
-            };
-        case roomActions.SET_PLAYERS:
-            return {
-                ...state,
-                player1: action.payload.player1,
-                player2: action.payload.player2,
-                isFirstCame: action.payload.isFirstCame,
-            };
-        default:
-            return state;
-    }
-};
+export const { joinRoomSuccess, leaveRoomSuccess, roomError, setPlayers, setLoading, addLog } =
+    roomSlice.actions;
+
+export default roomSlice.reducer;

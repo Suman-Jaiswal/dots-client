@@ -8,9 +8,15 @@ import configureAppStore from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const persistedState = localStorage.getItem('reduxState')
-    ? JSON.parse(localStorage.getItem('reduxState'))
-    : {};
+const persistedState = {
+    user: {
+        user: JSON.parse(localStorage.getItem('user')) || null,
+    },
+    room: {
+        roomId: JSON.parse(localStorage.getItem('roomId')) || null,
+        logs: JSON.parse(localStorage.getItem('logs')) || [],
+    },
+};
 
 const store = configureAppStore(persistedState);
 

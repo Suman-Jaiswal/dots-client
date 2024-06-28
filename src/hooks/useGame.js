@@ -2,6 +2,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react';
 import { Line, Tile } from '../components/pojo';
 import useSocket from '../hooks/useSocket';
 import { gameActions, gameReducer, initialState } from '../reducers/gameReducer';
+import { useGameListeners } from '../socket/socketListeners';
 
 const useGame = (roomId, logRef) => {
     const [state, dispatch] = useReducer(gameReducer, initialState);
@@ -19,52 +20,6 @@ const useGame = (roomId, logRef) => {
         },
         [logRef]
     );
-
-    useEffect(() => {
-        if (!roomId) {
-            return;
-        }
-        const handleGameStarted = (turn) => {
-            dispatch({ type: gameActions.SET_STARTED, payload: true });
-            dispatch({ type: gameActions.SET_TURN, payload: turn });
-        };
-        const handleMove = (data) => {
-            const { line, tiles, turn } = data;
-            const newLine = Line.fromString(line);
-            if (tiles) {
-                dispatch({
-                    type: gameActions.ADD_TILES,
-                    payload: tiles.map((tile) => Tile.fromObject(tile)),
-                });
-            }
-            dispatch({ type: gameActions.ADD_LINES, payload: [newLine] });
-            dispatch({ type: gameActions.SET_TURN, payload: turn });
-            addMessageElement(`Player ${turn} made a move`);
-        };
-        const handleTilesCreated = (tiles) => {
-            dispatch({ type: gameActions.ADD_TILES, payload: tiles });
-        };
-        const handleGameOver = (data) => {
-            dispatch({ type: gameActions.SET_WINNER, payload: data.winner });
-        };
-
-        const handleScore = (playerScores) => {
-            dispatch({ type: gameActions.SET_PLAYER_SCORES, payload: playerScores });
-        };
-
-        on('gameStarted', handleGameStarted);
-        on('move', handleMove);
-        on('tilesCreated', handleTilesCreated);
-        on('score', handleScore);
-        on('gameOver', handleGameOver);
-        return () => {
-            off('gameStarted');
-            off('move');
-            off('tilesCreated');
-            off('gameOver');
-            off('score');
-        };
-    }, [addMessageElement, off, on, roomId]);
 
     useEffect(() => {
         setLoading(true);
@@ -108,6 +63,8 @@ const useGame = (roomId, logRef) => {
     useEffect(() => {
         console.log('GameProvider mounted');
     }, [roomId, state]);
+
+    useGameListeners(on, off, dispatch);
 
     return {
         ...state,

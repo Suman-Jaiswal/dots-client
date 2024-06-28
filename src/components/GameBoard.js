@@ -1,24 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import useGame from '../hooks/useGame';
 import { Line, Point } from './pojo';
 
-const GameBoard = ({
-    rows,
-    cols,
-    isFirstCame,
-    logRef,
-    roomId,
-    player1,
-    player2,
-    setPlayerScores,
-}) => {
-    const { lines, tiles, started, startGame, makeMove, turn, playerScores, winner, loading } =
-        useGame(roomId, [player1, player2], logRef);
-
-    useEffect(() => {
-        setPlayerScores(playerScores.map((score) => ({ ...score, turn: score.username === turn })));
-    }, [playerScores, setPlayerScores, turn]);
+const GameBoard = ({ cols, rows, logRef }) => {
+    const { roomId, player1, player2, isFirstCame } = useSelector((state) => state.room);
+    const { lines, tiles, started, startGame, makeMove, turn, winner, loading } = useGame(
+        roomId,
+        logRef
+    );
 
     const [tempLine, setTempLine] = useState(null);
     const startDot = useRef(null);
@@ -96,7 +87,7 @@ const GameBoard = ({
                     y1={`${start.row * 50 + 25}`}
                     x2={`${end.col * 50 + 25}`}
                     y2={`${end.row * 50 + 25}`}
-                    stroke="black"
+                    stroke="white"
                     strokeWidth="2"
                 />
             );
@@ -148,14 +139,13 @@ const GameBoard = ({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                background: 'linear-gradient(45deg, rgba(1, 1, 1, 0.2), rgba(1, 1, 1, 0.5)',
+                background: 'linear-gradient(0deg, rgba(20, 20, 20, 0.8), rgba(25, 25, 25, 0.5)',
             }}>
             <div
                 className="text-center"
                 style={{
                     fontSize: 20,
                     fontWeight: 'bold',
-                    color: 'white',
                 }}>
                 <div>{element}</div>
             </div>
@@ -164,7 +154,7 @@ const GameBoard = ({
 
     return (
         <div
-            style={{ position: 'relative', border: '1px solid #ddd' }}
+            style={{ position: 'relative', border: '1px solid #333' }}
             className="dot-grid w-100 bg-light py-5"
             onMouseMove={handleMouseMove}
             onMouseUp={handleDotMouseUp}
@@ -177,7 +167,7 @@ const GameBoard = ({
                 : !player2
                 ? overlay('Waiting for opponent to join...')
                 : !started && !isFirstCame
-                ? overlay('Waiting for opponent to start...')
+                ? overlay(`${player2} will start the game...`)
                 : !started &&
                   isFirstCame &&
                   overlay(
@@ -203,7 +193,7 @@ const GameBoard = ({
                             cx={colIndex * 50 + 25}
                             cy={rowIndex * 50 + 25}
                             r="6"
-                            fill="black"
+                            fill="white"
                             onMouseDown={() => handleDotMouseDown(rowIndex, colIndex)}
                             onMouseUp={handleDotMouseUp}
                             onTouchStart={(e) => {

@@ -1,52 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, FormControl, InputGroup } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import useRoom from '../hooks/useRoom';
-import Header from './Header';
+import { useDispatch, useSelector } from 'react-redux';
+import useSocket from '../hooks/useSocket';
+import { roomEmitters } from '../socket/socketEmitters';
+import { useRoomListeners } from '../socket/socketListeners';
 import Room from './Room';
 
 const Lobby = () => {
+    const dispatch = useDispatch();
+    const { emit, on, off } = useSocket();
+    useRoomListeners(on, off, dispatch);
+
+    const roomEmitter = useMemo(() => roomEmitters(emit, dispatch), [emit, dispatch]);
     const error = useSelector((state) => state.user.error);
-    const {
-        roomId,
-        roomJoined,
-        roomError,
-        player1,
-        player2,
-        isFirstCame,
-        createRoom,
-        joinRoom,
-        leaveRoom,
-        message,
-    } = useRoom();
+    const { roomJoined, roomError, loading, roomId } = useSelector((state) => state.room);
 
     const [roomIdInput, setRoomIdInputInput] = useState('');
 
     const handleCreateRoom = () => {
-        createRoom();
+        roomEmitter.createRoom();
     };
 
     const handleJoinRoom = () => {
         if (roomIdInput) {
-            joinRoom(roomIdInput);
+            roomEmitter.joinRoom(roomIdInput);
         }
     };
 
+    useEffect(() => {
+        if (roomId) {
+            roomEmitter.joinRoom(roomId);
+        }
+    }, [roomId, roomEmitter]);
+
     return (
         <div>
-            <Header disabled={roomJoined} />
-            {message ? (
-                <div className="mt-5 text-center text-success">{message}</div>
+            {loading ? (
+                <div className="mt-5 text-center text-success">Rejoining room: {roomId}</div>
             ) : error ? (
                 <div className="mt-5 text-center text-danger">{error}</div>
             ) : roomJoined ? (
-                <Room
-                    roomId={roomId}
-                    leaveRoom={leaveRoom}
-                    player1={player1}
-                    player2={player2}
-                    isFirstCame={isFirstCame}
-                />
+                <Room />
             ) : (
                 <div className="d-flex mt-4 px-2 row m-auto">
                     <div className="col-12 col-md-5 py-3">

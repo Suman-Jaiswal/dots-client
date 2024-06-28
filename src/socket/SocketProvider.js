@@ -3,7 +3,7 @@ import { Spinner } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import io from 'socket.io-client';
 
-const url = process.env.REACT_APP_SOCKET_URL;
+const url = process.env.REACT_APP_LOCAL_SOCKET_URL;
 
 const SocketContext = createContext();
 
@@ -11,7 +11,7 @@ const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [socketError, setSocketError] = useState(null);
     const [isConnected, setIsConnected] = useState(false); // New state for connection status
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const user = useSelector((state) => state.user.user);
 
     useEffect(() => {

@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Spinner } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
-export default function ScoreCard({ player1, player1Score, player2, player2Score, turn }) {
+export default function ScoreCard() {
+    const { player1, player2 } = useSelector((state) => state.room);
+    const playerScores = useSelector((state) => state.game.playerScores);
+    const turn = useSelector((state) => state.game.turn);
+
+    const player1Score = useMemo(() => {
+        return playerScores.filter((score) => score.username === player1)[0]?.score || 0;
+    }, [player1, playerScores]);
+
+    const player2Score = useMemo(() => {
+        return playerScores.filter((score) => score.username === player2)[0]?.score || 0;
+    }, [player2, playerScores]);
+
     const playerCard = (player, score, color) => {
         return (
             <div className="d-flex  flex-column align-items-center p-2">
@@ -21,7 +34,7 @@ export default function ScoreCard({ player1, player1Score, player2, player2Score
         );
     };
     return (
-        <div className="bg-light p-3 w-100" style={{ border: '1px solid #ddd' }}>
+        <div className="bg-light p-3 w-100" style={{ border: '1px solid #333' }}>
             {true && (
                 <div className="row mx-0">
                     <div className="col-12 col-md-4 p-0">

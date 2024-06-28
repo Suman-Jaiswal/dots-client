@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react';
-import { SocketContext } from '../contexts/SocketContext';
+import { SocketContext } from '../socket/SocketProvider';
 
 const useSocket = () => {
     const socket = useContext(SocketContext);
@@ -23,15 +23,15 @@ const useSocket = () => {
     );
 
     const off = useCallback(
-        (event) => {
+        (event, callback) => {
             if (socket) {
-                socket.off(event);
+                socket.off(event, callback);
             }
         },
         [socket]
     );
 
-    return { socket, emit, on, off };
+    return { emit, on, off };
 };
 
 export default useSocket;

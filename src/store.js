@@ -17,7 +17,9 @@ export default function configureAppStore(preloadedState) {
 
     store.subscribe(() => {
         // Persist the state to localStorage on state changes
-        localStorage.setItem('reduxState', JSON.stringify(store.getState()));
+        localStorage.setItem('roomId', JSON.stringify(store.getState().room.roomId));
+        localStorage.setItem('user', JSON.stringify(store.getState().user.user));
+        localStorage.setItem('logs', JSON.stringify(store.getState().room.logs));
     });
 
     return store;

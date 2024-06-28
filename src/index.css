@@ -4,6 +4,8 @@ body {
         'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #111 !important;
+    color: azure !important;
 }
 
 code {
@@ -18,4 +20,8 @@ code {
 
 .dot-grid circle {
     transition: fill 0.2s;
+}
+
+.bg-light {
+    background-color: #222 !important;
 }

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { gameReducer } from './gameReducer';
-import { roomReducer } from './roomReducer';
+import roomReducer from './roomReducer';
 import userReducer from './userReducer';
 // import { playerReducer } from './playerReducer';
 
