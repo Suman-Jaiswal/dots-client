@@ -96,6 +96,9 @@ export const useGameListeners = (on, off, dispatch) => {
             }
             dispatch(addLines([newLine]));
             dispatch(setTurn(turn));
+            const audioEl = document.createElement('audio');
+            audioEl.src = 'connect.wav';
+            audioEl.play();
         };
         const handleGameOver = (winner) => {
             dispatch(setWinner(winner));

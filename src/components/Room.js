@@ -19,9 +19,9 @@ export default function Room() {
         <div className="mt-2 px-4">
             <div className="row">
                 <div className="col-12 col-md-6 py-3 d-flex flex-column align-items-center align-items-md-start">
-                    <ScoreCard />
-                    <br />
                     <GameBoard rows={5} cols={5} />
+                    <br />
+                    <ScoreCard />
                 </div>
                 <div className="col-12 col-md-6 py-3">
                     <LogCard />

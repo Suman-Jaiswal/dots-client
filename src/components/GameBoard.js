@@ -44,9 +44,6 @@ const GameBoard = ({ cols, rows }) => {
                     return;
                 }
                 makeMove(newLine.toString());
-                const audioEl = document.createElement('audio');
-                audioEl.src = 'connect.wav';
-                audioEl.play();
             }
 
             startDot.current = null;

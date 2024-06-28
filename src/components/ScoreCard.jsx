@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTurn } from '../reducers/gameReducer';
+import { Avatar } from './Avatar';
 
 export default function ScoreCard() {
     const dispatch = useDispatch();
@@ -23,11 +24,12 @@ export default function ScoreCard() {
 
     const playerCard = (player, score, color) => {
         return (
-            <div className="d-flex  flex-column align-items-center p-2">
+            <div className="d-flex h-100  flex-column align-items-center justify-content-center p-2">
                 {!player ? (
                     <Spinner animation="border" />
                 ) : (
                     <>
+                        <Avatar name={player} size={100} />
                         <div style={{ color: !turn ? 'white' : turn === player ? color : 'grey' }}>
                             <b>{player}</b>
                         </div>

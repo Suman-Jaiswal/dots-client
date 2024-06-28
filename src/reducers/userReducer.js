@@ -1,10 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-    NumberDictionary,
-    adjectives,
-    animals,
-    uniqueNamesGenerator,
-} from 'unique-names-generator';
+import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
 
 const userSlice = createSlice({
     name: 'user',
@@ -24,11 +19,7 @@ const userSlice = createSlice({
         },
         randomizeUsername(state, action) {
             const username = uniqueNamesGenerator({
-                dictionaries: [
-                    adjectives,
-                    animals,
-                    NumberDictionary.generate({ min: 100, max: 999 }),
-                ],
+                dictionaries: [adjectives, animals],
             });
             state.user = { ...state.user, username };
         },
