@@ -15,6 +15,9 @@ const App = () => {
             style={{
                 borderLeft: '1px solid #333',
                 borderRight: '1px solid #333',
+                height: '100vh',
+                backgroundColor: 'rgba(250, 250, 250, 0.1)',
+                backdropFilter: 'blur(1px)',
             }}>
             <SocketProvider>
                 <Header />

@@ -45,12 +45,12 @@ const LogCard = () => {
     return (
         <div>
             <div
-                className="d-flex justify-content-between align-items-center w-100 bg-light p-3"
+                className="d-flex justify-content-between align-items-center w-100 bg-dark p-3"
                 style={{ width: '', border: '1px solid #333' }}>
                 <div>
                     <b>Room ID: </b> {roomId}{' '}
                     <span
-                        className="border p-1 ms-2 rounded"
+                        className="border p-1 ms-2 px-2 rounded"
                         role="button"
                         onClick={copyRoomIdToClipboard}>
                         {copied ? 'Copied' : 'Copy'}
@@ -63,7 +63,7 @@ const LogCard = () => {
                 </div>
             </div>
             <div
-                className="bg-light"
+                className="bg-dark"
                 style={{ height: '80vh', width: '', border: '1px solid #333' }}>
                 <div
                     className="px-2 text-center"
@@ -71,16 +71,15 @@ const LogCard = () => {
                     style={{ height: 'inherit', overflow: 'auto' }}>
                     {logs.map((log, i) => (
                         <p
-                            className="my-3"
-                            style={{
-                                color: log.includes('joined')
-                                    ? 'green'
+                            className={`my-3 ${
+                                log.includes('joined')
+                                    ? 'text-success'
                                     : log.includes('left')
-                                    ? 'red'
+                                    ? 'text-danger'
                                     : log.includes('started') || log.includes('over')
-                                    ? 'blue'
-                                    : 'grey',
-                            }}
+                                    ? 'text-primary'
+                                    : 'text-secondary'
+                            }`}
                             key={i}>
                             {log.split(':').map((e, j) => (
                                 <span

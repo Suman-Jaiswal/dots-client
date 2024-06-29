@@ -174,7 +174,7 @@ const GameBoard = ({ cols, rows }) => {
     return (
         <div
             style={{ position: 'relative', border: '1px solid #333' }}
-            className="dot-grid w-100 bg-light py-5"
+            className="dot-grid w-100 bg-dark py-5"
             onMouseMove={handleMouseMove}
             onMouseUp={handleDotMouseUp}
             onTouchMove={handleMouseMove}

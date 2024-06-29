@@ -30,11 +30,12 @@ export default function ScoreCard() {
                 ) : (
                     <>
                         <Avatar name={player} size={100} />
-                        <div style={{ color: !turn ? 'white' : turn === player ? color : 'grey' }}>
+                        <div
+                            className={`text-center ${
+                                !turn ? 'text-white' : turn === player ? color : 'text-secondary'
+                            }`}>
                             <b>{player}</b>
-                        </div>
-                        <div style={{ color: !turn ? 'white' : turn === player ? color : 'grey' }}>
-                            Score: {score}
+                            <div>Score: {score}</div>
                         </div>
                     </>
                 )}
@@ -42,11 +43,11 @@ export default function ScoreCard() {
         );
     };
     return (
-        <div className="bg-light p-3 w-100" style={{ border: '1px solid #333' }}>
+        <div className="bg-dark p-3 w-100" style={{ border: '1px solid #333' }}>
             {true && (
                 <div className="row mx-0">
                     <div className="col-12 col-md-4 p-0">
-                        {playerCard(player1, player1Score, 'blue')}
+                        {playerCard(player1, player1Score, 'text-primary')}
                     </div>
                     <div className="col-12 d-flex flex-column flex-md-row justify-content-around col-md-4 align-items-center">
                         <div
@@ -64,7 +65,7 @@ export default function ScoreCard() {
                         </div>
                     </div>
                     <div className="col-12 col-md-4 p-0">
-                        {playerCard(player2, player2Score, 'red')}
+                        {playerCard(player2, player2Score, 'text-danger')}
                     </div>
                 </div>
             )}
